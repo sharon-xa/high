@@ -34,3 +34,44 @@ body {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
 }
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.absolute-hor-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.absolute-ver-center {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+/* TODO: the icon is still showing on firefox */
+input[type="date"]::-moz-calendar-picker-indicator {
+  display: none !important;
+  appearance: none !important;
+  background: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}

@@ -9,7 +9,7 @@ interface PublicOnlyRouteProps {
 
 export const PublicOnlyRoute: React.FC<PublicOnlyRouteProps> = ({
     children,
-    redirectTo = '/dashboard'
+    redirectTo = '/'
 }) => {
     const { isAuthenticated } = useAuthStore();
 

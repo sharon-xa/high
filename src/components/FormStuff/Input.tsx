@@ -7,15 +7,15 @@ type Props = {
     Icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
     type: HTMLInputTypeAttribute;
     inputName?: string;
+    placeholder?: string;
 }
 
-const Input = ({ value, onChangeFunc, Icon, type, inputName }: Props) => {
+const Input = ({ value, onChangeFunc, Icon, type, inputName, placeholder }: Props) => {
     const [activeInput, setActiveInput] = useState<boolean>(false);
     const calendarRef = useRef<HTMLInputElement>(null);
 
     const openCalendar = () => {
         if (calendarRef.current?.showPicker) {
-            console.log(calendarRef.current);
             calendarRef.current.showPicker();
         } else {
             calendarRef.current?.focus();
@@ -25,7 +25,7 @@ const Input = ({ value, onChangeFunc, Icon, type, inputName }: Props) => {
     if (type === "date") {
         return (
             <div
-                className={`flex items-center py-3 px-4 border-2 bg-[#2a2a2a] rounded-lg ${activeInput ? "active:border-[#adadad]" : "border-[#3a3a3a]"}`}
+                className={`flex items-center py-3 px-4 border-2 bg-background rounded-lg ${activeInput ? "active:border-light-border" : "border-border"}`}
                 onClick={openCalendar}
             >
                 <Icon size={20} style={{ marginRight: "14px" }} color={`${activeInput ? "#fff" : "#888"}`} />
@@ -33,7 +33,6 @@ const Input = ({ value, onChangeFunc, Icon, type, inputName }: Props) => {
                 <input
                     type="date"
                     name={inputName || type}
-                    placeholder={inputName ? capitalize(inputName) : capitalize(type)}
                     value={value}
                     onChange={onChangeFunc}
                     ref={calendarRef}
@@ -48,14 +47,14 @@ const Input = ({ value, onChangeFunc, Icon, type, inputName }: Props) => {
 
     return (
         <div
-            className={`flex items-center py-3 px-4 border-2 bg-[#2a2a2a] rounded-lg ${activeInput ? "active:border-[#adadad]" : "border-[#3a3a3a]"}`}
+            className={`flex items-center py-3 px-4 border-2 bg-background rounded-lg ${activeInput ? "active:border-light-border" : "border-border"}`}
         >
             <Icon size={20} style={{ marginRight: "14px" }} color={`${activeInput ? "#fff" : "#888"}`} />
 
             <input
                 type={type}
                 name={inputName || type}
-                placeholder={inputName ? capitalize(inputName) : capitalize(type)}
+                placeholder={placeholder ? capitalize(placeholder) : inputName ? capitalize(inputName) : capitalize(type)}
                 value={value}
                 onChange={onChangeFunc}
                 className="bg-none border-none flex-1 outline-none"

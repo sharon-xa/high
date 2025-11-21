@@ -20,6 +20,7 @@ export interface AuthState {
 export interface AuthActions {
     login: (credentials: LoginCredentials) => Promise<AuthResult>;
     register: (userData: RegisterData) => Promise<AuthResult>;
+    verifyOtp: (otp: string, email: string) => Promise<AuthResult>;
     logout: () => void;
     updateUser: (userData: Partial<User>) => void;
     clearError: () => void;
@@ -32,7 +33,8 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     birthdate: string;
     gender: Gender;

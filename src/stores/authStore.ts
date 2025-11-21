@@ -54,12 +54,36 @@ export const useAuthStore = create<AuthStore>()(
                     set({
                         user: data.user,
                         token: data.token,
-                        isAuthenticated: true,
+                        isAuthenticated: false,
                         isLoading: false,
                         error: null,
                     });
 
                     return { success: true };
+                } catch (error) {
+                    const errorMessage = axios.isAxiosError(error)
+                        ? error.response?.data?.message || error.message
+                        : 'Registration failed';
+                    set({
+                        error: errorMessage,
+                        isLoading: false,
+                    });
+                    return { success: false, message: errorMessage };
+                }
+            },
+
+            verifyOtp: async (otp: string, email: string): Promise<AuthResult> => {
+                try {
+                    const response = await api.post<AuthResult>('/auth/verify-email', { otp, email });
+                    const data = response.data;
+
+                    set({
+                        isAuthenticated: false,
+                        isLoading: false,
+                        error: null,
+                    });
+
+                    return data;
                 } catch (error) {
                     const errorMessage = axios.isAxiosError(error)
                         ? error.response?.data?.message || error.message

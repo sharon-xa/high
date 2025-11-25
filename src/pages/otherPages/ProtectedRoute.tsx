@@ -1,20 +1,20 @@
 import { Navigate, useLocation } from 'react-router';
-import { useAuthStore } from '../stores/authStore';
 import type { ReactNode } from 'react';
+import { useAuthState } from '../../hooks/useAuth';
 
 interface ProtectedRouteProps {
     children: ReactNode;
     redirectTo?: string;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     children,
     redirectTo = '/login'
 }) => {
-    const { isAuthenticated, isLoading } = useAuthStore();
+    const { isAuthenticated, isPending } = useAuthState();
     const location = useLocation();
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <p>Loading...</p>
@@ -28,3 +28,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
     return <>{children}</>;
 };
+
+export default ProtectedRoute;

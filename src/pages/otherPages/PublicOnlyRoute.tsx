@@ -1,13 +1,13 @@
-import { Navigate } from 'react-router';
-import { useAuthStore } from '../stores/authStore';
 import type { ReactNode } from 'react';
+import { Navigate } from 'react-router';
+import { useAuthStore } from '../../stores/authStore';
 
 interface PublicOnlyRouteProps {
     children: ReactNode;
     redirectTo?: string;
 }
 
-export const PublicOnlyRoute: React.FC<PublicOnlyRouteProps> = ({
+const PublicOnlyRoute: React.FC<PublicOnlyRouteProps> = ({
     children,
     redirectTo = '/'
 }) => {
@@ -19,3 +19,5 @@ export const PublicOnlyRoute: React.FC<PublicOnlyRouteProps> = ({
 
     return <>{children}</>;
 };
+
+export default PublicOnlyRoute;

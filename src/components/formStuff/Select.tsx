@@ -1,9 +1,10 @@
 import type { LucideProps } from "lucide-react";
 import { useRef, useState, type ForwardRefExoticComponent, type RefAttributes } from "react";
+import type { Gender } from "../../types/user.types";
 
 type Option = {
     Title: string;
-    Value: string;
+    Value: Gender;
     Disabled?: boolean;
 }
 
@@ -31,8 +32,8 @@ const Select = ({ value, onChangeFunc, Icon, inputName, options }: Props) => {
         <div
             className={`
                 flex items-center py-3 px-4 border-2
-                ${activeInput ? "active:border-[#adadad]" : "border-[#3a3a3a]"}
-                bg-[#2a2a2a] rounded-lg
+                ${activeInput ? "active:border-light-border" : "border-border"}
+                bg-background rounded-lg
             `}
             onClick={openSelect}
             onFocus={() => setActiveInput(true)}
@@ -56,7 +57,7 @@ const Select = ({ value, onChangeFunc, Icon, inputName, options }: Props) => {
                     <option
                         value={option.Value}
                         disabled={option.Disabled}
-                        className="bg-[#2a2a2a]"
+                        className="bg-background"
                         key={option.Value}
                     >
                         {option.Title}

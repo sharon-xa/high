@@ -1,7 +1,7 @@
-import PostCard from "../components/PostCard/PostCard";
+import PostCard from "../components/postCard/PostCard";
 import SearchBar from "../components/SearchBar";
 
-const HomePage = () => {
+const Home = () => {
     return (
         <>
             <header className="flex items-center justify-center min-h-[30vh] lg:min-h-[45vh]">
@@ -42,4 +42,4 @@ const HomePage = () => {
     )
 }
 
-export default HomePage;
+export default Home;

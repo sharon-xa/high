@@ -13,18 +13,12 @@ export interface AuthState {
     user: User | null;
     token: string | null;
     isAuthenticated: boolean;
-    isLoading: boolean;
-    error: string | null;
 }
 
 export interface AuthActions {
-    login: (credentials: LoginCredentials) => Promise<AuthResult>;
-    register: (userData: RegisterData) => Promise<AuthResult>;
-    verifyOtp: (otp: string, email: string) => Promise<AuthResult>;
-    logout: () => void;
+    setAuth: (user: User, token: string) => void;
+    clearAuth: () => void;
     updateUser: (userData: Partial<User>) => void;
-    clearError: () => void;
-    checkAuth: () => Promise<boolean>;
 }
 
 export interface LoginCredentials {
@@ -49,4 +43,19 @@ export interface AuthResult {
 export interface AuthResponse {
     user: User;
     token: string;
+}
+
+export interface LoginFormData {
+    email: string;
+    password: string;
+}
+
+export interface SignupFormData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    birthdate: string;
+    gender: Gender;
+    password: string;
+    confirmPassword: string;
 }

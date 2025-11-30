@@ -33,7 +33,7 @@ const Home = () => {
                         highFives={928}
                         comments={382}
                     />
-                    <button className="px-5 py-2 bg-background rounded border-2 border-border">
+                    <button className="px-5 py-2 bg-background rounded border-2 border-border cursor-pointer">
                         More Suggestions
                     </button>
                 </section>

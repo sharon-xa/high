@@ -13,7 +13,7 @@ export type ParagraphBlock = {
 
 export type HeaderBlock = {
     uuid: string;
-    type: "HeaderOne" | "HeaderTwo" | "HeaderThree";
+    type: "headerOne" | "headerTwo" | "headerThree";
     content: string;
     metadata: Metadata;
 }
@@ -25,6 +25,11 @@ export type ImageBlock = {
     metadata: Metadata;
 }
 
+// We need to add the following:
+//  1. code block
+//  2. iframe
+//  3. separator
+export type BlockType = "headerOne" | "headerTwo" | "headerThree" | "paragraph" | "image";
 export type Block = ParagraphBlock | HeaderBlock | ImageBlock;
 
 export type EditorState = {
@@ -38,7 +43,7 @@ export type EditorAction = {
     updateTitle(title: string): void;
 
     // Blocks
-    addBlock(type: Block, afterIndex: number | null): void;
+    addEmptyBlock(type: BlockType, afterIndex: number | null): void;
     updateBlock(index: number, content: string): void;
     deleteBlock(index: number): void;
     reorderBlocks(sourceIndex: number, destinationIndex: number): void;

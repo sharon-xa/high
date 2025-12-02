@@ -82,3 +82,9 @@ input[type="date"]::-moz-calendar-picker-indicator {
   position: absolute !important;
   pointer-events: none !important;
 }
+
+.text-editor-input {
+  outline: none;
+  border: none;
+  width: 100%;
+}

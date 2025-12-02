@@ -16,8 +16,6 @@ const TextEditor = () => {
         addEmptyBlock,
         updateBlock,
         deleteBlock,
-        duplicateBlock,
-        reorderBlocks,
 
         // activity
         activeBlockIndex,
@@ -30,41 +28,41 @@ const TextEditor = () => {
         }
     }, [activeBlockIndex]);
 
-
     const keyDownOnBlock = (e: React.KeyboardEvent<HTMLTextAreaElement>, blockIndex: number) => {
         const cursorPosition = e.currentTarget.selectionStart;
 
         switch (e.key) {
-            case "Enter":
+            case "Enter": {
                 e.preventDefault();
                 addEmptyBlock("paragraph", blockIndex);
                 break;
-            case "Backspace":
-                // console.log("Backspace");
+            }
+            case "Backspace": {
                 if (blocks[blockIndex].content === "" && blockIndex !== 0) {
                     e.preventDefault();
                     deleteBlock(blockIndex);
                 }
                 break;
-            case "ArrowUp":
-                // console.log("Up\n", "cursor position:", cursorPosition);
+            }
+            case "ArrowUp": {
+                const previousBlock = blockIndex - 1;
                 if (blockIndex > 0 && cursorPosition <= 0) {
                     e.preventDefault();
-                    setActiveBlock(blockIndex - 1);
-                    const textSize = inputRefs.current[blockIndex - 1]?.value.length;
-                    inputRefs.current[blockIndex - 1]?.setSelectionRange(textSize || 0, textSize || 0);
+                    setActiveBlock(previousBlock);
+                    const textSize = inputRefs.current[previousBlock]?.value.length;
+                    inputRefs.current[previousBlock]?.setSelectionRange(textSize || 0, textSize || 0);
                 }
                 break;
-            case "ArrowDown":
-                // console.log("Down\n", "cursor position:", cursorPosition);
-                if (blocks.length > blockIndex + 1 && cursorPosition >= e.currentTarget.value.length) {
+            }
+            case "ArrowDown": {
+                const nextBlock = blockIndex + 1;
+                if (blocks.length > nextBlock && cursorPosition >= e.currentTarget.value.length) {
                     e.preventDefault();
-                    setActiveBlock(blockIndex + 1);
-                    inputRefs.current[blockIndex + 1]?.setSelectionRange(0, 0);
+                    setActiveBlock(nextBlock);
+                    inputRefs.current[nextBlock]?.setSelectionRange(0, 0);
                 }
                 break;
-            default:
-                break;
+            }
         }
     }
 
@@ -140,4 +138,3 @@ const TextEditor = () => {
 };
 
 export default TextEditor;
-

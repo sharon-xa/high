@@ -1,10 +1,17 @@
 import type React from "react";
-import { useEditorStore } from "../../stores/editorStore";
 import { useEffect, useRef } from "react";
 import { Plus } from "lucide-react";
+import { useEditorStore } from "../../stores/editorStore";
+import { getCursorPosition, setCursorPosition } from "./helpers";
+
+import BlockElement from "./BlockElement";
+import Toolbar from "./Toolbar";
+
+// TODO:
+// 1. floating toolbar.
 
 const TextEditor = () => {
-    const inputRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
+    const divRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const {
         // title
@@ -14,22 +21,24 @@ const TextEditor = () => {
         // blocks
         blocks,
         addEmptyBlock,
-        updateBlock,
         deleteBlock,
 
         // activity
         activeBlockIndex,
         setActiveBlock,
+
+        // toolbar
+        showToolbar
     } = useEditorStore();
 
     useEffect(() => {
-        if (activeBlockIndex !== null && activeBlockIndex !== -1 && inputRefs.current[activeBlockIndex]) {
-            inputRefs.current[activeBlockIndex]?.focus();
+        if (activeBlockIndex !== null && activeBlockIndex !== -1 && divRefs.current[activeBlockIndex]) {
+            divRefs.current[activeBlockIndex]?.focus();
         }
     }, [activeBlockIndex]);
 
-    const keyDownOnBlock = (e: React.KeyboardEvent<HTMLTextAreaElement>, blockIndex: number) => {
-        const cursorPosition = e.currentTarget.selectionStart;
+    const keyDownOnBlock = (e: React.KeyboardEvent<HTMLDivElement>, blockIndex: number) => {
+        const cursorPosition = getCursorPosition(e.currentTarget);
 
         switch (e.key) {
             case "Enter": {
@@ -49,17 +58,21 @@ const TextEditor = () => {
                 if (blockIndex > 0 && cursorPosition <= 0) {
                     e.preventDefault();
                     setActiveBlock(previousBlock);
-                    const textSize = inputRefs.current[previousBlock]?.value.length;
-                    inputRefs.current[previousBlock]?.setSelectionRange(textSize || 0, textSize || 0);
+                    const prevElement = divRefs.current[previousBlock];
+                    if (prevElement) {
+                        const textSize = prevElement.innerText.length;
+                        setCursorPosition(prevElement, textSize);
+                    }
                 }
                 break;
             }
             case "ArrowDown": {
                 const nextBlock = blockIndex + 1;
-                if (blocks.length > nextBlock && cursorPosition >= e.currentTarget.value.length) {
+                if (blocks.length > nextBlock && cursorPosition >= e.currentTarget.innerText.length) {
                     e.preventDefault();
                     setActiveBlock(nextBlock);
-                    inputRefs.current[nextBlock]?.setSelectionRange(0, 0);
+                    const nextElement = divRefs.current[nextBlock];
+                    if (nextElement) setCursorPosition(nextElement, 0);
                 }
                 break;
             }
@@ -78,7 +91,7 @@ const TextEditor = () => {
                         if (e.key === "Enter") {
                             e.preventDefault();
                             setActiveBlock(0);
-                            inputRefs.current[0]?.focus();
+                            divRefs.current[0]?.focus();
                         }
                     }}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -92,42 +105,16 @@ const TextEditor = () => {
                 />
 
                 <div className="flex flex-col gap-4">
-                    {blocks.map((block, i) => {
-                        const baseProps = {
-                            value: block.content,
-                            ref: (el: HTMLTextAreaElement | null) => {
-                                inputRefs.current[i] = el;
-                            },
-                            autoFocus: i === activeBlockIndex,
-                            onFocus: () => setActiveBlock(i),
-                            onInput: (e: React.FormEvent<HTMLTextAreaElement>) => {
-                                const target = e.currentTarget;
-                                target.style.height = 'auto';
-                                target.style.height = target.scrollHeight + 'px';
-                            }
-                        };
-
-                        if (block.type === "paragraph")
-                            return (
-                                <textarea
-                                    key={block.uuid}
-                                    {...baseProps}
-                                    placeholder={!block.content && activeBlockIndex === i ? "Something..." : ""}
-                                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => keyDownOnBlock(e, i)}
-                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateBlock(i, e.currentTarget.value)}
-                                    rows={1}
-                                    className="text-editor-input resize-none overflow-hidden h-auto"
-                                />
-                            );
-                        else if (block.type === "headerOne")
-                            return <input type="text" />;
-                        else if (block.type === "headerTwo")
-                            return <input type="text" />;
-                        else if (block.type === "headerThree")
-                            return <input type="text" />;
-                        else if (block.type === "image")
-                            return <input type="text" />;
-                    })}
+                    {showToolbar && <Toolbar />}
+                    {blocks.map((block, i) => (
+                        <BlockElement
+                            key={block.uuid}
+                            index={i}
+                            block={block}
+                            keyDownOnBlock={keyDownOnBlock}
+                            setRef={(el) => divRefs.current[i] = el}
+                        />
+                    ))}
                     <button className="bg-primary-50 active:bg-primary py-1.5 flex justify-center items-center rounded cursor-pointer">
                         <Plus size={32} />
                     </button>

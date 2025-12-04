@@ -36,6 +36,9 @@ export type EditorState = {
     title: string;
     blocks: Block[];
     activeBlockIndex: number | null;
+    showToolbar: boolean;
+    selectedText: string;
+    toolbarPosition: ToolbarPosition;
 };
 
 export type EditorAction = {
@@ -49,6 +52,19 @@ export type EditorAction = {
     reorderBlocks(sourceIndex: number, destinationIndex: number): void;
     setActiveBlock(index: number): void;
     duplicateBlock(index: number): void;
+
+    // Toolbar
+    setShowToolbar(show: boolean): void;
+    setSelectedText(text: string): void;
+    setToolbarPosition(top: number, left: number): void;
 };
 
 export type EditorStore = EditorState & EditorAction;
+
+// TOOLBAR
+export type TextModeificationCommand = "bold" | "italic" | "code" | "mark" | "link";
+
+export type ToolbarPosition = {
+    top: number;
+    left: number;
+};

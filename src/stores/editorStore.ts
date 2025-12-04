@@ -11,6 +11,11 @@ export const useEditorStore = create<EditorStore>((set) => ({
     ],
     activeBlockIndex: 0, // -1 == title
 
+    // Toolbar
+    showToolbar: false,
+    selectedText: "",
+    toolbarPosition: { top: 0, left: 0 },
+
     updateTitle: (title: string) => set(() => ({ title: title })),
 
     addEmptyBlock(type: BlockType, afterIndex: number | null) {
@@ -87,4 +92,8 @@ export const useEditorStore = create<EditorStore>((set) => ({
             return { blocks: newBlocks, activeBlockIndex: index + 1 }
         });
     },
+
+    setShowToolbar: (show: boolean) => set(() => ({ showToolbar: show })),
+    setSelectedText: (text: string) => set(() => ({ selectedText: text })),
+    setToolbarPosition: (top: number, left: number) => set(() => ({ toolbarPosition: { top: top, left: left } })),
 }));

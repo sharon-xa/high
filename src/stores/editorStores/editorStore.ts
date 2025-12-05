@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { v4 as uuid } from "uuid";
-import type { EditorStore, Block, BlockType } from "../types/editor.types";
+import type { EditorStore, Block, BlockType } from "../../types/editor.types";
 
 // TODO: what is debouncing? and why do I need it?
 
@@ -93,7 +93,4 @@ export const useEditorStore = create<EditorStore>((set) => ({
         });
     },
 
-    setShowToolbar: (show: boolean) => set(() => ({ showToolbar: show })),
-    setSelectedText: (text: string) => set(() => ({ selectedText: text })),
-    setToolbarPosition: (top: number, left: number) => set(() => ({ toolbarPosition: { top: top, left: left } })),
 }));

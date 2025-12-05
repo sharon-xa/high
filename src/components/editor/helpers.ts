@@ -1,4 +1,4 @@
-import type { TextModeificationCommand } from "../../types/editor.types";
+import type { TextModeificationCommand } from "../../types/toolbar.types";
 
 export const getCursorPosition = (element: HTMLDivElement): number => {
     const selection = window.getSelection();

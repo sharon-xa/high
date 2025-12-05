@@ -1,14 +1,12 @@
 import type React from "react";
 import { useEffect, useRef } from "react";
 import { Plus } from "lucide-react";
-import { useEditorStore } from "../../stores/editorStore";
+import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { getCursorPosition, setCursorPosition } from "./helpers";
 
 import BlockElement from "./BlockElement";
 import Toolbar from "./Toolbar";
-
-// TODO:
-// 1. floating toolbar.
+import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 
 const TextEditor = () => {
     const divRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -27,9 +25,9 @@ const TextEditor = () => {
         activeBlockIndex,
         setActiveBlock,
 
-        // toolbar
-        showToolbar
     } = useEditorStore();
+
+    const { showToolbar } = useToolbarStore();
 
     useEffect(() => {
         if (activeBlockIndex !== null && activeBlockIndex !== -1 && divRefs.current[activeBlockIndex]) {

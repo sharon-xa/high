@@ -1,12 +1,12 @@
 import type React from "react";
 import { useEffect, useRef } from "react";
 import { Plus } from "lucide-react";
-import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { getCursorPosition, setCursorPosition } from "./helpers";
+import { useEditorStore } from "../../stores/editorStores/editorStore";
+import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 
 import BlockElement from "./BlockElement";
 import Toolbar from "./Toolbar";
-import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 
 const TextEditor = () => {
     const divRefs = useRef<(HTMLDivElement | null)[]>([]);

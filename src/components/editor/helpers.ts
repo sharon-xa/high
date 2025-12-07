@@ -1,4 +1,4 @@
-import type { TextModeificationCommand } from "../../types/toolbar.types";
+import type { SelectedText, TextStylesCommand } from "../../types/toolbar.types";
 
 export const getCursorPosition = (element: HTMLDivElement): number => {
     const selection = window.getSelection();
@@ -48,23 +48,164 @@ export const setCursorPosition = (element: HTMLDivElement, position: number): vo
 };
 
 // make sure to pass the innertext not the innerhtml
-export function applyFormat(
-    selectedText: string,
-    textModificationCommand: TextModeificationCommand,
+export function toggleFormat(
+    wholeText: string,
+    selectedTextProperties: SelectedText,
+    textStylesCommand: TextStylesCommand,
     href?: string
 ): string {
-    switch (textModificationCommand) {
-        case "bold":
-            return `<strong>${selectedText}</strong>`;
-        case "italic":
-            return `<em>${selectedText}</em>`;
-        case "code":
-            return `<code>${selectedText}</code>`;
-        case "mark":
-            return `<mark>${selectedText}</mark>`;
-        case "link":
-            return `<a href="${href}">${selectedText}</a>`;
-        default:
-            return selectedText;
+
+    console.log(selectedTextProperties);
+    if (selectedTextProperties.isStyled) {
+        return wholeText;
     }
+
+    const insert = (htmlOpenTag: string, htmlCloseTag: string): string => {
+        const firstSection = wholeText.slice(0, selectedTextProperties.start);
+        const SecondSection = wholeText.slice(selectedTextProperties.end, wholeText.length);
+        const selectedText = wholeText.slice(selectedTextProperties.start, selectedTextProperties.end);
+
+        return `${firstSection}${htmlOpenTag}${selectedText}${htmlCloseTag}${SecondSection}`;
+    }
+
+    switch (textStylesCommand) {
+        case "bold":
+            return insert("<strong>", "</strong>");
+        case "italic":
+            return insert("<em>", "</em>");
+        case "code":
+            return insert("<code>", "</code>");
+        case "mark":
+            return insert("<mark>", "</mark>");
+        case "link":
+            return insert(`<a href="${href}">`, "</a>");
+        default:
+            return "";
+    }
+};
+
+export const isStyledText = (constNode: Node | null): { isStyled: boolean, typeOfStyle: TextStylesCommand | null } => {
+
+    if (!constNode)
+        return { isStyled: false, typeOfStyle: null };
+
+    let node: Node | null = constNode;
+    if (node.nodeType === Node.TEXT_NODE) {
+        node = node.parentNode;
+    }
+
+    if (!node)
+        return { isStyled: false, typeOfStyle: null };
+
+    while (node && node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as HTMLElement;
+
+        switch (element.tagName) {
+            case "STRONG":
+            case "B":
+                return { isStyled: true, typeOfStyle: "bold" };
+            case "CODE":
+                return { isStyled: true, typeOfStyle: "code" };
+            case "EM":
+            case "I":
+                return { isStyled: true, typeOfStyle: "italic" };
+            case "A":
+                return { isStyled: true, typeOfStyle: "link" };
+            case "MARK":
+                return { isStyled: true, typeOfStyle: "mark" };
+        }
+
+        if (element.isContentEditable) {
+            break;
+        }
+
+        node = node.parentElement;
+    }
+
+    return { isStyled: false, typeOfStyle: null };
+};
+
+type SelectionDetails = {
+    top: number;
+    left: number;
+
+    blockElement: HTMLElement;
+    selectedTextElement: HTMLElement | null;
+
+    startOfSelection: number;
+    endOfSelection: number;
+};
+
+export const getSelectionDetails = (onNoSelection?: () => void): SelectionDetails | null => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !selection.rangeCount) {
+        if (onNoSelection) onNoSelection();
+        return null;
+    }
+
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    const selectedText = range.toString().trim();
+
+    let selectedTextElement: HTMLElement | null = null;
+
+    const node: Node = range.startContainer;
+
+    if (node.nodeType === Node.TEXT_NODE) {
+        const textContent = node.textContent || '';
+        if (textContent.includes(selectedText)) {
+            selectedTextElement = node.parentElement!;
+        } else {
+            let sibling = node.nextSibling;
+            while (sibling) {
+                if (sibling.nodeType === Node.ELEMENT_NODE) {
+                    const siblingText = sibling.textContent || '';
+                    if (siblingText.includes(selectedText)) {
+                        selectedTextElement = sibling as HTMLElement;
+                        break;
+                    }
+                }
+                if (sibling.nodeType === Node.TEXT_NODE) {
+                    const siblingText = sibling.textContent || '';
+                    if (siblingText.includes(selectedText)) {
+                        selectedTextElement = sibling.parentElement!;
+                        break;
+                    }
+                }
+                sibling = sibling.nextSibling;
+            }
+
+            if (!selectedTextElement) {
+                selectedTextElement = node.parentElement!;
+            }
+        }
+    } else {
+        selectedTextElement = node as HTMLElement;
+    }
+
+    if (!selectedTextElement) return null;
+
+    let editableElement: HTMLElement | null = selectedTextElement;
+    while (editableElement && !editableElement.isContentEditable) {
+        editableElement = editableElement.parentElement;
+    }
+
+    if (!editableElement || !editableElement.isContentEditable)
+        return null;
+
+    const preSelectionRange = range.cloneRange();
+    preSelectionRange.selectNodeContents(editableElement);
+    preSelectionRange.setEnd(range.startContainer, range.startOffset);
+    const start = preSelectionRange.toString().length;
+    const end = start + range.toString().length;
+
+    return {
+        top: rect.top + window.scrollY - 50,
+        left: rect.left + window.scrollX + rect.width / 2,
+        blockElement: editableElement,
+        selectedTextElement: selectedTextElement,
+        startOfSelection: start,
+        endOfSelection: end,
+    };
 };

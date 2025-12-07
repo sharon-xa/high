@@ -1,7 +1,7 @@
 import type React from "react";
 import type { Block } from "../../types/editor.types";
 import { useEffect, useRef } from "react";
-import { getCursorPosition, setCursorPosition } from "./helpers";
+import { getCursorPosition, getSelectionDetails, isStyledText, setCursorPosition } from "./helpers";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 
@@ -16,7 +16,7 @@ type Props = {
 const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
 
     const { activeBlockIndex, updateBlock, setActiveBlock } = useEditorStore();
-    const { setSelectedText, setShowToolbar, setToolbarPosition } = useToolbarStore();
+    const { setWholeText, setSelectedText, setShowToolbar, setToolbarPosition } = useToolbarStore();
 
     const divRef = useRef<HTMLDivElement>(null);
 
@@ -35,31 +35,30 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
         }
     }, [block.content]);
 
+
     const handleTextSelection = () => {
-        const selection = window.getSelection();
-
-        if (!selection || selection.isCollapsed || !selection.rangeCount) {
-            setShowToolbar(false);
+        const selection = getSelectionDetails(() => setShowToolbar(false));
+        if (selection === null)
             return;
-        }
 
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
+        console.log(selection);
 
-        setToolbarPosition(
-            rect.top + window.scrollY - 50, // 50px above selection
-            rect.left + window.scrollX + rect.width / 2
-        );
+        setToolbarPosition(selection.top, selection.left);
         setShowToolbar(true);
-        console.log(selection.anchorNode?.parentNode);
-        console.log("whole text:", selection.anchorNode?.textContent);
-        console.log("selected text:", selection.toString());
 
-        const wholeText = selection.anchorNode?.textContent;
-        if (!wholeText) return;
+        console.log(selection.selectedTextElement);
 
-        // const selectedText = selection.toString();
-        setSelectedText(wholeText);
+        const { isStyled, typeOfStyle } = isStyledText(selection.selectedTextElement);
+        console.log(isStyled, typeOfStyle);
+
+        const wholeText = selection.blockElement.innerText;
+        setWholeText(wholeText);
+        setSelectedText({
+            isStyled,
+            typeOfStyle,
+            start: selection.startOfSelection,
+            end: selection.endOfSelection
+        });
     };
 
     return (
@@ -72,10 +71,18 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
             suppressContentEditableWarning
             onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
             onInput={(e: React.FormEvent<HTMLDivElement>) => {
-                updateBlock(index, e.currentTarget.innerHTML);
+                let content = e.currentTarget.innerHTML;
+
+                // bruh, the browser adds a newline char or <br> tag by default when the contentEditable property is set to true
+                content = content
+                    .replace(/^<br>$/, '') // Remove standalone br
+                    .replace(/^<div><br><\/div>$/, '') // Remove empty div with br
+                    .trim();
+
+                updateBlock(index, content);
             }}
-            onMouseUp={handleTextSelection}
-            onKeyUp={handleTextSelection}
+            onSelect={handleTextSelection}
+            onBlur={() => setTimeout(() => setShowToolbar(false), 150)}
             onFocus={() => setActiveBlock(index)}
             autoFocus={index === activeBlockIndex}
             className="text-editor-input"

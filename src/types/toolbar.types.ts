@@ -1,20 +1,30 @@
-export type TextModeificationCommand = "bold" | "italic" | "code" | "mark" | "link";
+export type TextStylesCommand = "bold" | "italic" | "code" | "mark" | "link";
 
 export type ToolbarPosition = {
     top: number;
     left: number;
 };
 
+export type SelectedText = {
+    isStyled: boolean;
+    typeOfStyle: TextStylesCommand | null;
+
+    start: number;
+    end: number;
+};
+
 type ToolbarState = {
     showToolbar: boolean;
     toolbarPosition: ToolbarPosition;
-    selectedText: string;
+    wholeText: string;
+    selectedText: SelectedText;
 };
 
 type ToolbarAction = {
     setShowToolbar(show: boolean): void;
-    setSelectedText(text: string): void;
     setToolbarPosition(top: number, left: number): void;
+    setWholeText(text: string): void;
+    setSelectedText(selectedTextProperties: SelectedText): void;
 };
 
 export type ToolbarStore = ToolbarState & ToolbarAction;

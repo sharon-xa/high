@@ -13,7 +13,7 @@ const Toolbar = () => {
     useEffect(() => {
         if (!window.visualViewport) return;
 
-        const visualViewport = window.visualViewport; // Store in const
+        const visualViewport = window.visualViewport;
 
         const handleResize = () => {
             const viewportHeight = visualViewport.height;
@@ -36,7 +36,7 @@ const Toolbar = () => {
 
     return (
         <div
-            className="fixed bg-gray-800 text-white rounded-lg shadow-lg px-2 py-1 flex gap-2 z-50"
+            className="fixed outline outline-light-border bg-background text-white rounded-lg shadow-lg p-1 flex gap-1 z-50"
             style={{
                 ...(isMobile
                     ? {
@@ -64,7 +64,7 @@ const Toolbar = () => {
                     updateBlock(activeBlockIndex, toggleFormat(wholeText, selectedText, "bold"));
                     setShowToolbar(false);
                 }}
-                className={`px-2 py-1 hover:bg-gray-700 rounded font-bold ${isMobile ? 'min-w-11 min-h-11 text-lg' : ''}`}
+                className={`px-2 py-1 ${selectedText.typeOfStyle && selectedText.typeOfStyle === "bold" ? "bg-light-border/25" : ""} hover:bg-light-border/25 rounded font-bold min-w-10 aspect-square text-lg`}
             >
                 B
             </button>
@@ -77,51 +77,12 @@ const Toolbar = () => {
                     updateBlock(activeBlockIndex, toggleFormat(wholeText, selectedText, "italic"));
                     setShowToolbar(false);
                 }}
-                className={`px-2 py-1 hover:bg-gray-700 rounded italic ${isMobile ? 'min-w-11 min-h-11 text-lg' : ''}`}
+                className={`px-2 py-1 ${selectedText.typeOfStyle && selectedText.typeOfStyle === "italic" ? "bg-light-border/25" : ""} hover:bg-light-border/25 rounded italic min-w-10 aspect-square text-lg`}
             >
                 i
             </button>
         </div>
     );
-
-    // return (
-    //     <div
-    //         className="fixed bg-gray-800 text-white rounded-lg shadow-lg px-2 py-1 flex gap-2 z-50"
-    //         style={{
-    //             top: `${toolbarPosition.top}px`,
-    //             left: `${toolbarPosition.left}px`,
-    //             transform: 'translateX(-50%)',
-    //         }}
-    //         onMouseDown={(e) => e.preventDefault()} // Prevent losing selection
-    //     >
-    //         <button
-    //             onClick={() => {
-    //                 if (activeBlockIndex === null) {
-    //                     setShowToolbar(false);
-    //                     return;
-    //                 }
-    //                 updateBlock(activeBlockIndex, toggleFormat(wholeText, selectedText, "bold"));
-    //                 setShowToolbar(false);
-    //             }}
-    //             className="px-2 py-1 hover:bg-gray-700 rounded font-bold"
-    //         >
-    //             B
-    //         </button>
-    //         <button
-    //             onClick={() => {
-    //                 if (activeBlockIndex === null) {
-    //                     setShowToolbar(false);
-    //                     return;
-    //                 }
-    //                 updateBlock(activeBlockIndex, toggleFormat(wholeText, selectedText, "italic"));
-    //                 setShowToolbar(false);
-    //             }}
-    //             className="px-2 py-1 hover:bg-gray-700 rounded italic"
-    //         >
-    //             i
-    //         </button>
-    //     </div>
-    // );
 };
 
 export default Toolbar;

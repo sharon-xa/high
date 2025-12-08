@@ -41,15 +41,10 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
         if (selection === null)
             return;
 
-        console.log(selection);
-
         setToolbarPosition(selection.top, selection.left);
         setShowToolbar(true);
 
-        console.log(selection.selectedTextElement);
-
         const { isStyled, typeOfStyle } = isStyledText(selection.selectedTextElement);
-        console.log(isStyled, typeOfStyle);
 
         const wholeText = selection.blockElement.innerText;
         setWholeText(wholeText);
@@ -84,6 +79,11 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
             onSelect={handleTextSelection}
             onBlur={() => setTimeout(() => setShowToolbar(false), 150)}
             onFocus={() => setActiveBlock(index)}
+            onPaste={(e: React.ClipboardEvent<HTMLDivElement>) => {
+                e.preventDefault();
+                const text = e.clipboardData.getData('text/plain');
+                document.execCommand('insertText', false, text);
+            }}
             autoFocus={index === activeBlockIndex}
             className="text-editor-input"
         />

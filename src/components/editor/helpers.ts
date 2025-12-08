@@ -55,8 +55,8 @@ export function toggleFormat(
     href?: string
 ): string {
 
-    console.log(selectedTextProperties);
-    if (selectedTextProperties.isStyled) {
+    // if the added style is the same as the style that already exist then remove the style
+    if (selectedTextProperties.isStyled && selectedTextProperties.typeOfStyle === textStylesCommand) {
         return wholeText;
     }
 
@@ -181,21 +181,35 @@ export const getSelectionDetails = (onNoSelection?: () => void): SelectionDetail
             }
         }
     } else {
-        selectedTextElement = node as HTMLElement;
+        const element = node as HTMLElement;
+
+        if (element.isContentEditable && element.getAttribute('contenteditable') === 'true') {
+            const firstChild = element.firstElementChild;
+            if (firstChild && firstChild.textContent?.includes(selectedText)) {
+                selectedTextElement = firstChild as HTMLElement;
+            } else {
+                selectedTextElement = element;
+            }
+        } else {
+            selectedTextElement = element;
+        }
     }
 
     if (!selectedTextElement) return null;
 
-    let editableElement: HTMLElement | null = selectedTextElement;
-    while (editableElement && !editableElement.isContentEditable) {
-        editableElement = editableElement.parentElement;
+    let blockElement: HTMLElement | null = selectedTextElement;
+    while (blockElement) {
+        if (blockElement.isContentEditable && blockElement.getAttribute('contenteditable') === 'true') {
+            break;
+        }
+        blockElement = blockElement.parentElement;
     }
 
-    if (!editableElement || !editableElement.isContentEditable)
+    if (!blockElement || !blockElement.isContentEditable)
         return null;
 
     const preSelectionRange = range.cloneRange();
-    preSelectionRange.selectNodeContents(editableElement);
+    preSelectionRange.selectNodeContents(blockElement);
     preSelectionRange.setEnd(range.startContainer, range.startOffset);
     const start = preSelectionRange.toString().length;
     const end = start + range.toString().length;
@@ -203,7 +217,7 @@ export const getSelectionDetails = (onNoSelection?: () => void): SelectionDetail
     return {
         top: rect.top + window.scrollY - 50,
         left: rect.left + window.scrollX + rect.width / 2,
-        blockElement: editableElement,
+        blockElement: blockElement,
         selectedTextElement: selectedTextElement,
         startOfSelection: start,
         endOfSelection: end,

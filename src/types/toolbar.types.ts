@@ -25,6 +25,11 @@ type ToolbarAction = {
     setToolbarPosition(top: number, left: number): void;
     setWholeText(text: string): void;
     setSelectedText(selectedTextProperties: SelectedText): void;
+
+    toggleStyle(command: TextStylesCommand): void;
+    applyLink(url: string): void;
+    insertImage(url: string): void;
+    resetSelection(): void;
 };
 
 export type ToolbarStore = ToolbarState & ToolbarAction;

@@ -1,15 +1,18 @@
 import type React from "react";
 import { useEffect, useRef } from "react";
-import { Plus } from "lucide-react";
 import { getCursorPosition, setCursorPosition } from "./helpers";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 
 import BlockElement from "./BlockElement";
-import Toolbar from "./Toolbar";
+import Toolbar from "./richTextEditing/Toolbar";
+import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
+import CommandMenu from "./richTextEditing/CommandMenu";
+import MobileToolBar from "./richTextEditing/MobileToolBar";
 
 const TextEditor = () => {
     const divRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     const {
         // title
@@ -24,10 +27,10 @@ const TextEditor = () => {
         // activity
         activeBlockIndex,
         setActiveBlock,
-
     } = useEditorStore();
 
     const { showToolbar } = useToolbarStore();
+    const { isCommandMenuOpen, setIsCommandMenuOpen } = useCommandMenuStore();
 
     useEffect(() => {
         if (activeBlockIndex !== null && activeBlockIndex !== -1 && divRefs.current[activeBlockIndex]) {
@@ -45,9 +48,14 @@ const TextEditor = () => {
                 break;
             }
             case "Backspace": {
-                if (blocks[blockIndex].content === "" && blockIndex !== 0) {
-                    e.preventDefault();
-                    deleteBlock(blockIndex);
+                if (blocks[blockIndex].content === "") {
+                    if (!isCommandMenuOpen && blockIndex !== 0) {
+                        e.preventDefault();
+                        deleteBlock(blockIndex);
+                    }
+
+                    if (isCommandMenuOpen)
+                        setIsCommandMenuOpen(false);
                 }
                 break;
             }
@@ -74,8 +82,14 @@ const TextEditor = () => {
                 }
                 break;
             }
+            case "/": {
+                if (blocks[blockIndex].content === "") {
+                    e.preventDefault();
+                    setIsCommandMenuOpen(true);
+                }
+            }
         }
-    }
+    };
 
     return (
         <div className="min-h-96">
@@ -103,7 +117,8 @@ const TextEditor = () => {
                 />
 
                 <div className="flex flex-col gap-4">
-                    {showToolbar && <Toolbar />}
+                    {!isMobile && showToolbar && <Toolbar />}
+                    {!isMobile && isCommandMenuOpen && <CommandMenu />}
                     {blocks.map((block, i) => (
                         <BlockElement
                             key={block.uuid}
@@ -113,11 +128,9 @@ const TextEditor = () => {
                             setRef={(el) => divRefs.current[i] = el}
                         />
                     ))}
-                    <button className="bg-primary-50 active:bg-primary py-1.5 flex justify-center items-center rounded cursor-pointer">
-                        <Plus size={32} />
-                    </button>
                 </div>
             </div>
+            {isMobile && <MobileToolBar />}
         </div>
     );
 };

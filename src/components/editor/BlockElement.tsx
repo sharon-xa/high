@@ -14,7 +14,6 @@ type Props = {
 };
 
 const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
-
     const { activeBlockIndex, updateBlock, setActiveBlock } = useEditorStore();
     const { setWholeText, setSelectedText, setShowToolbar, setToolbarPosition } = useToolbarStore();
 

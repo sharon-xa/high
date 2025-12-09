@@ -8,7 +8,7 @@ import BlockElement from "./BlockElement";
 import Toolbar from "./richTextEditing/Toolbar";
 import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
 import CommandMenu from "./richTextEditing/CommandMenu";
-import MobileToolBar from "./richTextEditing/MobileToolBar";
+import MobileToolBar from "./richTextEditing/MobileToolbar";
 
 const TextEditor = () => {
     const divRefs = useRef<(HTMLDivElement | null)[]>([]);

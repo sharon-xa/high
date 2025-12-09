@@ -9,7 +9,7 @@ export const useEditorStore = create<EditorStore>((set) => ({
     blocks: [
         { uuid: uuid(), content: "", type: 'paragraph' }
     ],
-    activeBlockIndex: 0, // -1 == title
+    activeBlockIndex: 0,
 
     // Toolbar
     showToolbar: false,

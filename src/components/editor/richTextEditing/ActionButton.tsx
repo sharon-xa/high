@@ -19,12 +19,13 @@ const ActionButton = ({ className, buttonName, ButtonContent, isActive, action }
             className={`
                 ${isActive ? "bg-light-border/25" : ""} 
                 hover:bg-light-border/25 
+                active:bg-light-border/25
                 rounded
                 ${className}
                 `}
             onClick={() => action()}
         >
-            {ButtonContent ? <ButtonContent name={buttonName} size={20} strokeWidth={2.5} /> : buttonName}
+            {ButtonContent ? <ButtonContent name={buttonName} size={22} strokeWidth={2} /> : buttonName}
         </button>
     )
 }

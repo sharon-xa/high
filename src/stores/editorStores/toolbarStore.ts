@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { toggleFormat } from "../../components/editor/helpers";
 import { useEditorStore } from "./editorStore";
-import type { SelectedText, TextStylesCommand, ToolbarStore } from "../../types/toolbar.types";
+import type { SelectedText, TextStylesCommand, ToolbarStore } from "../../types/editor/toolbar.types";
 
 export const useToolbarStore = create<ToolbarStore>((set) => ({
     wholeText: "",

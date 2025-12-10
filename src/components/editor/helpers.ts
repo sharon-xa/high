@@ -1,4 +1,4 @@
-import type { SelectedText, TextStylesCommand } from "../../types/toolbar.types";
+import type { SelectedText, TextStylesCommand } from "../../types/editor/toolbar.types";
 
 export const getCursorPosition = (element: HTMLDivElement): number => {
     const selection = window.getSelection();

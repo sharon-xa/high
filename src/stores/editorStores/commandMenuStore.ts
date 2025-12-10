@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { CommandMenuStore } from "../../types/commandMenu.types";
+import type { CommandMenuStore } from "../../types/editor/commandMenu.types";
 
 export const useCommandMenuStore = create<CommandMenuStore>((set) => ({
     isCommandMenuOpen: false,

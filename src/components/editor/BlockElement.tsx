@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Block } from "../../types/editor.types";
+import type { Block } from "../../types/editor/editor.types";
 import { useEffect, useRef } from "react";
 import { getCursorPosition, getSelectionDetails, isStyledText, setCursorPosition } from "./helpers";
 import { useEditorStore } from "../../stores/editorStores/editorStore";

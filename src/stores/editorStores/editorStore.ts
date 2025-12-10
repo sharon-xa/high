@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { v4 as uuid } from "uuid";
-import type { EditorStore, Block, BlockType } from "../../types/editor.types";
+import type { EditorStore } from "../../types/editor/editor.types";
+import type { Block, BlockType } from "../../types/editor/block.types";
 
 // TODO: what is debouncing? and why do I need it?
 

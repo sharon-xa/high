@@ -1,14 +1,16 @@
-import type React from "react";
+import { v4 as uuid } from "uuid";
 import { useEffect, useRef } from "react";
 import { getCursorPosition, setCursorPosition } from "./helpers";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
+import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
 
 import BlockElement from "./BlockElement";
 import Toolbar from "./richTextEditing/Toolbar";
-import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
 import CommandMenu from "./richTextEditing/CommandMenu";
 import MobileToolBar from "./richTextEditing/MobileToolbar";
+
+import type React from "react";
 
 const TextEditor = () => {
     const divRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -21,7 +23,7 @@ const TextEditor = () => {
 
         // blocks
         blocks,
-        addEmptyBlock,
+        addBlock,
         deleteBlock,
 
         // activity
@@ -44,18 +46,22 @@ const TextEditor = () => {
         switch (e.key) {
             case "Enter": {
                 e.preventDefault();
-                addEmptyBlock("paragraph", blockIndex);
+                addBlock({ uuid: uuid(), type: "paragraph", content: "" }, blockIndex);
                 break;
             }
             case "Backspace": {
-                if (blocks[blockIndex].content === "") {
+                const block = blocks[blockIndex];
+                const blockHaveContentField = (block.type === "paragraph" || block.type === "code" || block.type === "header");
+
+                if (blockHaveContentField && block.content === "") {
                     if (!isCommandMenuOpen && blockIndex !== 0) {
                         e.preventDefault();
                         deleteBlock(blockIndex);
                     }
 
-                    if (isCommandMenuOpen)
-                        setIsCommandMenuOpen(false);
+                    if (isCommandMenuOpen) setIsCommandMenuOpen(false);
+                } else if (block.type === "image" || block.type === "separator") {
+                    deleteBlock(blockIndex);
                 }
                 break;
             }
@@ -83,7 +89,7 @@ const TextEditor = () => {
                 break;
             }
             case "/": {
-                if (blocks[blockIndex].content === "") {
+                if (blocks[blockIndex].type === "paragraph" && blocks[blockIndex].content === "") {
                     e.preventDefault();
                     setIsCommandMenuOpen(true);
                 }

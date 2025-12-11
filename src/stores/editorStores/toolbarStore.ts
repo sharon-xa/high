@@ -1,89 +1,68 @@
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import { toggleFormat } from "../../components/editor/helpers";
 import { useEditorStore } from "./editorStore";
 import type { SelectedText, TextStylesCommand, ToolbarStore } from "../../types/editor/toolbar.types";
 
-export const useToolbarStore = create<ToolbarStore>((set) => ({
-    wholeText: "",
-    showToolbar: false,
-    toolbarPosition: { top: 0, left: 0 },
-    selectedText: { isStyled: false, typeOfStyle: null, start: 0, end: 0 },
-
-    setWholeText: (text: string) => set(() => ({ wholeText: text })),
-    setShowToolbar: (show: boolean) => set(() => ({ showToolbar: show })),
-    setToolbarPosition: (top: number, left: number) => set(() => ({ toolbarPosition: { top, left } })),
-    setSelectedText: (selectedTextProperties: SelectedText) => set(() => ({
-        selectedText: { ...selectedTextProperties }
-    })),
-    toggleStyle: (command: TextStylesCommand) => set((state) => {
-        const { start, end } = state.selectedText;
-        const { activeBlockIndex, updateBlock } = useEditorStore.getState();
-
-        if (start === end || activeBlockIndex === null || activeBlockIndex === undefined) {
-            return state;
-        }
-
-        const updatedContent = toggleFormat(state.wholeText, state.selectedText, command);
-        updateBlock(activeBlockIndex, updatedContent);
-
-        return {
-            wholeText: updatedContent,
-            showToolbar: false,
-            selectedText: {
-                ...state.selectedText,
-                isStyled: true,
-                typeOfStyle: command
-            }
-        };
-    }),
-    applyLink: (url) => set((state) => {
-        const { start, end } = state.selectedText;
-        const { activeBlockIndex, updateBlock } = useEditorStore.getState();
-
-        if (!url || start === end || activeBlockIndex === null || activeBlockIndex === undefined) {
-            return state;
-        }
-
-        const updatedContent = toggleFormat(state.wholeText, state.selectedText, "link", url);
-        updateBlock(activeBlockIndex, updatedContent);
-
-        return {
-            wholeText: updatedContent,
-            showToolbar: false,
-            selectedText: {
-                ...state.selectedText,
-                isStyled: true,
-                typeOfStyle: "link"
-            }
-        };
-    }),
-    insertImage: (url) => set((state) => {
-        const { start, end } = state.selectedText;
-        const { activeBlockIndex, updateBlock } = useEditorStore.getState();
-
-        if (!url || activeBlockIndex === null || activeBlockIndex === undefined) {
-            return state;
-        }
-
-        const firstSection = state.wholeText.slice(0, start);
-        const secondSection = state.wholeText.slice(end);
-        const imgTag = `<img src="${url}" alt="" />`;
-        const updatedContent = `${firstSection}${imgTag}${secondSection}`;
-
-        updateBlock(activeBlockIndex, updatedContent);
-
-        return {
-            wholeText: updatedContent,
-            showToolbar: false,
-            selectedText: {
-                ...state.selectedText,
-                isStyled: false,
-                typeOfStyle: null
-            }
-        };
-    }),
-    resetSelection: () => set(() => ({
+export const useToolbarStore = create<ToolbarStore>()(
+    immer((set) => ({
+        html: "",
         showToolbar: false,
-        selectedText: { isStyled: false, typeOfStyle: null, start: 0, end: 0 }
-    })),
-}));
+        toolbarPosition: { top: 0, left: 0 },
+        selectedText: { isStyled: false, typeOfStyle: null, start: 0, end: 0 },
+
+        setHtml: (html: string) => set((draft) => {
+            draft.html = html;
+        }),
+        setShowToolbar: (show: boolean) => set((draft) => {
+            draft.showToolbar = show;
+        }),
+        setToolbarPosition: (top: number, left: number) => set((draft) => {
+            draft.toolbarPosition.top = top;
+            draft.toolbarPosition.left = left;
+        }),
+        setSelectedText: (selectedTextProperties: SelectedText) => set((draft) => {
+            draft.selectedText = { ...selectedTextProperties };
+        }),
+        toggleStyle: (command: TextStylesCommand) => set((draft) => {
+            const { start, end } = draft.selectedText;
+            const { activeBlockIndex, updateBlockContent } = useEditorStore.getState();
+
+            if (start === end || activeBlockIndex === null || activeBlockIndex === undefined) {
+                return;
+            }
+
+            const updatedContent = toggleFormat(command);
+            updateBlockContent(activeBlockIndex, updatedContent);
+
+            draft.html = updatedContent;
+            draft.showToolbar = false;
+            draft.selectedText.isStyled = true;
+            draft.selectedText.typeOfStyle = command;
+
+            draft.selectedText = { start: 0, end: 0, isStyled: false, typeOfStyle: null };
+        }),
+        applyLink: (url) => set((draft) => {
+            const { start, end } = draft.selectedText;
+            const { activeBlockIndex, updateBlockContent } = useEditorStore.getState();
+
+            if (!url || start === end || activeBlockIndex === null || activeBlockIndex === undefined) {
+                return;
+            }
+
+            const updatedContent = toggleFormat("link", url);
+            updateBlockContent(activeBlockIndex, updatedContent);
+
+            draft.html = updatedContent;
+            draft.showToolbar = false;
+            draft.selectedText.isStyled = true;
+            draft.selectedText.typeOfStyle = "link";
+
+            draft.selectedText = { start: 0, end: 0, isStyled: false, typeOfStyle: null };
+        }),
+        resetSelection: () => set((draft) => {
+            draft.showToolbar = false;
+            draft.selectedText = { isStyled: false, typeOfStyle: null, start: 0, end: 0 };
+        }),
+    }))
+);

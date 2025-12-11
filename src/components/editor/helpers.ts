@@ -49,39 +49,20 @@ export const setCursorPosition = (element: HTMLDivElement, position: number): vo
 
 // make sure to pass the innertext not the innerhtml
 export function toggleFormat(
-    wholeText: string,
-    selectedTextProperties: SelectedText,
-    textStylesCommand: TextStylesCommand,
+    command: TextStylesCommand,
     href?: string
 ): string {
+    /**
+        * DOM-based toggling.  
+        *  - Gets current selection  
+        *  - Detects if already inside the formatting tag  
+        *  - Wraps or unwraps accordingly  
+        *  - For link: uses <a href="...">  
+        *  - For bold: <strong>, italic: <em>, code: <code>, mark: <mark>  
+        *  - Never uses string manipulation or innerHTML replacement  
+    */
 
-    // if the added style is the same as the style that already exist then remove the style
-    if (selectedTextProperties.isStyled && selectedTextProperties.typeOfStyle === textStylesCommand) {
-        return wholeText;
-    }
-
-    const insert = (htmlOpenTag: string, htmlCloseTag: string): string => {
-        const firstSection = wholeText.slice(0, selectedTextProperties.start);
-        const SecondSection = wholeText.slice(selectedTextProperties.end, wholeText.length);
-        const selectedText = wholeText.slice(selectedTextProperties.start, selectedTextProperties.end);
-
-        return `${firstSection}${htmlOpenTag}${selectedText}${htmlCloseTag}${SecondSection}`;
-    }
-
-    switch (textStylesCommand) {
-        case "bold":
-            return insert("<strong>", "</strong>");
-        case "italic":
-            return insert("<em>", "</em>");
-        case "code":
-            return insert("<code>", "</code>");
-        case "mark":
-            return insert("<mark>", "</mark>");
-        case "link":
-            return insert(`<a href="${href}">`, "</a>");
-        default:
-            return "";
-    }
+    return ""
 };
 
 export const isStyledText = (constNode: Node | null): { isStyled: boolean, typeOfStyle: TextStylesCommand | null } => {

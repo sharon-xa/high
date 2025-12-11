@@ -3,7 +3,7 @@ import ActionButton from "./ActionButton";
 import { Bold, Code, Highlighter, Image, Italic, Link } from "lucide-react";
 
 const Toolbar = () => {
-    const { selectedText, toolbarPosition, toggleStyle, applyLink, insertImage } = useToolbarStore();
+    const { selectedText, toolbarPosition, toggleStyle, applyLink } = useToolbarStore();
 
     return (
         <div
@@ -54,15 +54,6 @@ const Toolbar = () => {
                 buttonName="link"
                 ButtonContent={Link}
                 isActive={selectedText.typeOfStyle === "link"}
-            />
-            <ActionButton
-                action={() => {
-                    const url = window.prompt("Image URL");
-                    if (url) insertImage(url);
-                }}
-                className="p-1"
-                buttonName="image"
-                ButtonContent={Image}
             />
         </div >
     );

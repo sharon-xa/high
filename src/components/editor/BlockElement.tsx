@@ -1,9 +1,10 @@
-import type React from "react";
-import type { Block } from "../../types/editor/editor.types";
 import { useEffect, useRef } from "react";
 import { getCursorPosition, getSelectionDetails, isStyledText, setCursorPosition } from "./helpers";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
+
+import type React from "react";
+import type { Block, CodeBlock, HeaderBlock, ParagraphBlock } from "../../types/editor/block.types";
 
 type Props = {
     block: Block;
@@ -14,12 +15,16 @@ type Props = {
 };
 
 const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
-    const { activeBlockIndex, updateBlock, setActiveBlock } = useEditorStore();
-    const { setWholeText, setSelectedText, setShowToolbar, setToolbarPosition } = useToolbarStore();
+    const { activeBlockIndex, updateBlockContent, setActiveBlock } = useEditorStore();
+    const { setHtml, setSelectedText, setShowToolbar, setToolbarPosition } = useToolbarStore();
 
     const divRef = useRef<HTMLDivElement>(null);
 
+    const isTextBlock = (b: Block): b is ParagraphBlock | HeaderBlock | CodeBlock =>
+        b.type === "paragraph" || b.type === "header" || b.type === "code";
+
     useEffect(() => {
+        if (!isTextBlock(block)) return;
         if (divRef.current && divRef.current.innerHTML !== block.content) {
             const selection = window.getSelection();
             const cursorPos = selection && divRef.current.contains(selection.focusNode)
@@ -32,8 +37,7 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
                 setCursorPosition(divRef.current, cursorPos);
             }
         }
-    }, [block.content]);
-
+    }, [block]);
 
     const handleTextSelection = () => {
         const selection = getSelectionDetails(() => setShowToolbar(false));
@@ -45,8 +49,9 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
 
         const { isStyled, typeOfStyle } = isStyledText(selection.selectedTextElement);
 
-        const wholeText = selection.blockElement.innerText;
-        setWholeText(wholeText);
+        const html = selection.blockElement.innerHTML;
+
+        setHtml(html);
         setSelectedText({
             isStyled,
             typeOfStyle,
@@ -55,38 +60,52 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
         });
     };
 
-    return (
-        <div
-            ref={(el) => {
-                divRef.current = el;
-                setRef(el);
-            }}
-            contentEditable
-            suppressContentEditableWarning
-            onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
-            onInput={(e: React.FormEvent<HTMLDivElement>) => {
-                let content = e.currentTarget.innerHTML;
+    if (block.type === "image") {
+        return (
+            <div
+                ref={setRef}
+                className="flex justify-center"
+                onFocus={() => setActiveBlock(index)}
+                tabIndex={0}
+            >
+                <img src={block.url} alt={block.alt} className="max-w-full rounded" />
+            </div>
+        );
+    } else if (block.type === "separator") {
+        return (
+            <div ref={setRef} className="my-4">
+                <hr className="border-t border-neutral-200" />
+            </div>
+        );
+    } else {
+        return (
+            <div
+                ref={(el) => {
+                    divRef.current = el;
+                    setRef(el);
+                }}
+                contentEditable
+                suppressContentEditableWarning
+                onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
+                onInput={(e: React.FormEvent<HTMLDivElement>) => {
+                    let content = e.currentTarget.innerHTML;
 
-                // bruh, the browser adds a newline char or <br> tag by default when the contentEditable property is set to true
-                content = content
-                    .replace(/^<br>$/, '') // Remove standalone br
-                    .replace(/^<div><br><\/div>$/, '') // Remove empty div with br
-                    .trim();
+                    // bruh, the browser adds a newline char or <br> tag by default when the contentEditable property is set to true
+                    content = content
+                        .replace(/^<br>$/, '') // Remove standalone br
+                        .replace(/^<div><br><\/div>$/, '') // Remove empty div with br
+                        .trim();
 
-                updateBlock(index, content);
-            }}
-            onSelect={handleTextSelection}
-            onBlur={() => setTimeout(() => setShowToolbar(false), 150)}
-            onFocus={() => setActiveBlock(index)}
-            onPaste={(e: React.ClipboardEvent<HTMLDivElement>) => {
-                e.preventDefault();
-                const text = e.clipboardData.getData('text/plain');
-                document.execCommand('insertText', false, text);
-            }}
-            autoFocus={index === activeBlockIndex}
-            className="text-editor-input"
-        />
-    )
+                    updateBlockContent(index, content);
+                }}
+                onSelect={handleTextSelection}
+                onBlur={() => setTimeout(() => setShowToolbar(false), 150)}
+                onFocus={() => setActiveBlock(index)}
+                autoFocus={index === activeBlockIndex}
+                className="text-editor-input"
+            />
+        )
+    }
 }
 
 export default BlockElement;

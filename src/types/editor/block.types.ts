@@ -1,21 +1,39 @@
-export type Metadata = {
-    headerLevel?: 1 | 2 | 3;
-    alt?: string; // for images
-    url?: string; // for images
-};
-
 export type BlockType =
-    "headerOne" |
-    "headerTwo" |
-    "headerThree" |
+    "header" |
     "paragraph" |
     "image" |
     "separator" |
     "code";
 
-export type Block = {
+type BaseBlock = {
     uuid: string;
-    type: BlockType;
-    content: string;
-    metadata?: Metadata;
 }
+
+export type HeaderBlock = BaseBlock & {
+    type: "header";
+    level: 1 | 2 | 3;
+    content: string;
+}
+
+export type ParagraphBlock = BaseBlock & {
+    type: "paragraph";
+    content: string;
+}
+
+export type ImageBlock = BaseBlock & {
+    type: "image";
+    url: string;
+    alt: string;
+}
+
+export type SeparatorBlock = BaseBlock & {
+    type: "separator";
+}
+
+export type CodeBlock = BaseBlock & {
+    type: "code";
+    content: string;
+    language?: string;
+}
+
+export type Block = HeaderBlock | ParagraphBlock | ImageBlock | SeparatorBlock | CodeBlock;

@@ -1,97 +1,95 @@
 import { create } from "zustand";
+import { immer } from 'zustand/middleware/immer';
 import { v4 as uuid } from "uuid";
 import type { EditorStore } from "../../types/editor/editor.types";
-import type { Block, BlockType } from "../../types/editor/block.types";
+import type { Block } from "../../types/editor/block.types";
 
-// TODO: what is debouncing? and why do I need it?
+// TODO: what is debouncing? and do I need it?
 
-export const useEditorStore = create<EditorStore>((set) => ({
-    title: "",
-    blocks: [
-        { uuid: uuid(), content: "", type: 'paragraph' }
-    ],
-    activeBlockIndex: 0,
+export const useEditorStore = create<EditorStore>()(
+    immer((set) => ({
+        title: "",
+        blocks: [
+            { uuid: uuid(), content: "", type: 'paragraph' }
+        ],
+        activeBlockIndex: 0,
 
-    // Toolbar
-    showToolbar: false,
-    selectedText: "",
-    toolbarPosition: { top: 0, left: 0 },
-
-    updateTitle: (title: string) => set(() => ({ title: title })),
-
-    addEmptyBlock(type: BlockType, afterIndex: number | null) {
-        const newBlock: Block = {
-            uuid: uuid(),
-            content: "",
-            type: type,
-            metadata: {}
-        };
-
-        if (afterIndex === null) {
+        updateTitle: (title: string) =>
             set((state) => {
-                return { blocks: [newBlock, ...state.blocks], activeBlockIndex: 0 };
-            });
-        } else {
+                state.title = title;
+            }),
+
+        addBlock(block: Block, afterIndex: number | null) {
             set((state) => {
-                const newBlocks = [...state.blocks];
-                newBlocks.splice(afterIndex + 1, 0, newBlock);
-
-                return { blocks: newBlocks, activeBlockIndex: afterIndex + 1 };
+                if (afterIndex === null) {
+                    state.blocks.unshift(block);
+                    state.activeBlockIndex = 0;
+                } else {
+                    state.blocks.splice(afterIndex + 1, 0, block);
+                    state.activeBlockIndex = afterIndex + 1;
+                }
             });
-        }
-    },
-    updateBlock(index: number, content: string) {
-        set((state) => {
-            if (!state.blocks[index])
-                return state;
-            state.blocks[index].content = content;
-            return { blocks: [...state.blocks] };
-        })
-    },
-    deleteBlock(index: number) {
-        set((state) => {
-            if (!state.blocks[index])
-                return state;
+        },
 
-            return {
-                blocks: state.blocks.length <= 1
-                    ? [{ uuid: uuid(), content: "", type: "paragraph" }]
-                    : state.blocks.toSpliced(index, 1),
-                activeBlockIndex: index > 0 ? index - 1 : 0 // one step backward
-            };
-        })
-    },
-    reorderBlocks(sourceIndex: number, destinationIndex: number) {
-        const moveItem = (arr: Block[], from: number, to: number) => {
-            const newArr = [...arr];
-            const item = newArr.splice(from, 1)[0];
-            newArr.splice(to, 0, item);
-            return newArr;
-        };
+        updateBlock(index: number, block: Block) {
+            set((state) => {
+                if (index < 0 || index >= state.blocks.length) return;
+                state.blocks[index] = block;
+            });
+        },
 
-        set((state) => {
-            const newBlocks = moveItem(state.blocks, sourceIndex, destinationIndex);
-            if (state.activeBlockIndex === sourceIndex)
-                return { blocks: newBlocks, activeBlockIndex: destinationIndex };
-            return { blocks: newBlocks };
-        });
-    },
-    setActiveBlock(index: number) {
-        set(() => ({ activeBlockIndex: index }));
-    },
-    duplicateBlock(index: number) {
-        set((state) => {
-            const blockToDuplicate = state.blocks[index];
-            if (!blockToDuplicate)
-                return state;
+        updateBlockContent(index: number, content: string) {
+            set((state) => {
+                if (index < 0 || index >= state.blocks.length)
+                    return;
+                if (
+                    state.blocks[index].type !== "image" &&
+                    state.blocks[index].type !== "separator"
+                )
+                    state.blocks[index].content = content;
+            });
+        },
 
-            const duplicatedBlock = { ...blockToDuplicate, uuid: uuid() };
+        deleteBlock(index: number) {
+            set((state) => {
+                if (index < 0 || index >= state.blocks.length) return;
 
-            const newBlocks = state.blocks
-                .toSpliced(index + 1, 0, duplicatedBlock);
+                if (state.blocks.length <= 1) {
+                    state.blocks = [{ uuid: uuid(), content: "", type: "paragraph" }];
+                    state.activeBlockIndex = 0;
+                } else {
+                    state.blocks.splice(index, 1);
+                    state.activeBlockIndex = index > 0 ? index - 1 : 0;
+                }
+            });
+        },
 
-            return { blocks: newBlocks, activeBlockIndex: index + 1 }
-        });
-    },
+        reorderBlocks(sourceIndex: number, destinationIndex: number) {
+            set((state) => {
+                const [movedBlock] = state.blocks.splice(sourceIndex, 1);
+                state.blocks.splice(destinationIndex, 0, movedBlock);
 
-}));
+                if (state.activeBlockIndex === sourceIndex) {
+                    state.activeBlockIndex = destinationIndex;
+                }
+            });
+        },
+
+        setActiveBlock(index: number) {
+            set((state) => {
+                state.activeBlockIndex = index;
+            });
+        },
+
+        duplicateBlock(index: number) {
+            set((state) => {
+                const blockToDuplicate = state.blocks[index];
+                if (!blockToDuplicate) return;
+
+                const duplicatedBlock = { ...blockToDuplicate, uuid: uuid() };
+                state.blocks.splice(index + 1, 0, duplicatedBlock);
+                state.activeBlockIndex = index + 1;
+            });
+        },
+    }))
+);

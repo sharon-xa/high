@@ -16,19 +16,18 @@ export type SelectedText = {
 type ToolbarState = {
     showToolbar: boolean;
     toolbarPosition: ToolbarPosition;
-    wholeText: string;
+    html: string;
     selectedText: SelectedText;
 };
 
 type ToolbarAction = {
     setShowToolbar(show: boolean): void;
     setToolbarPosition(top: number, left: number): void;
-    setWholeText(text: string): void;
+    setHtml(text: string): void;
     setSelectedText(selectedTextProperties: SelectedText): void;
 
     toggleStyle(command: TextStylesCommand): void;
     applyLink(url: string): void;
-    insertImage(url: string): void;
     resetSelection(): void;
 };
 

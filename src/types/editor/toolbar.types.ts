@@ -5,26 +5,18 @@ export type ToolbarPosition = {
     left: number;
 };
 
-export type SelectedText = {
-    isStyled: boolean;
-    typeOfStyle: TextStylesCommand | null;
-
-    start: number;
-    end: number;
-};
-
 type ToolbarState = {
     showToolbar: boolean;
     toolbarPosition: ToolbarPosition;
-    html: string;
-    selectedText: SelectedText;
+    range: Range | null;
 };
 
 type ToolbarAction = {
-    setShowToolbar(show: boolean): void;
+    showToolbar(): void;
+    hideToolbar(): void;
     setToolbarPosition(top: number, left: number): void;
-    setHtml(text: string): void;
-    setSelectedText(selectedTextProperties: SelectedText): void;
+
+    setRange(range: Range | null): void;
 
     toggleStyle(command: TextStylesCommand): void;
     applyLink(url: string): void;

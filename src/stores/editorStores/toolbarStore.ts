@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { toggleFormat } from "../../components/editor/helpers";
+
+import { toggleFormat } from "./toggleFormat";
 import { useEditorStore } from "./editorStore";
 import type { SelectedText, TextStylesCommand, ToolbarStore } from "../../types/editor/toolbar.types";
 

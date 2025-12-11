@@ -1,4 +1,4 @@
-import type { SelectedText, TextStylesCommand } from "../../types/editor/toolbar.types";
+import type { TextStylesCommand } from "../../types/editor/toolbar.types";
 
 export const getCursorPosition = (element: HTMLDivElement): number => {
     const selection = window.getSelection();
@@ -45,24 +45,6 @@ export const setCursorPosition = (element: HTMLDivElement, position: number): vo
         selection.removeAllRanges();
         selection.addRange(range);
     }
-};
-
-// make sure to pass the innertext not the innerhtml
-export function toggleFormat(
-    command: TextStylesCommand,
-    href?: string
-): string {
-    /**
-        * DOM-based toggling.  
-        *  - Gets current selection  
-        *  - Detects if already inside the formatting tag  
-        *  - Wraps or unwraps accordingly  
-        *  - For link: uses <a href="...">  
-        *  - For bold: <strong>, italic: <em>, code: <code>, mark: <mark>  
-        *  - Never uses string manipulation or innerHTML replacement  
-    */
-
-    return ""
 };
 
 export const isStyledText = (constNode: Node | null): { isStyled: boolean, typeOfStyle: TextStylesCommand | null } => {

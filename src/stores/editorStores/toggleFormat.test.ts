@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { toggleFormat } from "../helpers";
+import { toggleFormat } from './toggleFormat';
 
 function setSelection(startNode: Node, startOffset: number, endNode: Node, endOffset: number) {
     const sel = window.getSelection()!;

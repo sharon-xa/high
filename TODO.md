@@ -15,3 +15,8 @@
 5. On desktop:
     - [ ] Make sure that the toolbar is working as expected.
     - [ ] Make sure adding different types of blocks with "/" is working as expected.
+
+# ISSUES
+1. For some reason when clicking bold to make some text bold it automatically select the next character.
+2. Test the toggleFormat function.
+3. 

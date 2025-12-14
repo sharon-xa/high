@@ -88,74 +88,71 @@ export const isStyledText = (constNode: Node | null): { isStyled: boolean, typeO
     return { isStyled: false, typeOfStyle: null };
 };
 
-
 type SelectionDetails = {
     top: number;
     centerX: number;
-
-    selectedTextElement: HTMLElement | null;
+    selectedTextElement: HTMLElement;
     range: Range;
 };
 
 export const getSelectionDetails = (selection: Selection): SelectionDetails | null => {
+    if (!selection.rangeCount) return null;
 
     const range = selection.getRangeAt(0);
-
     const selectedText = range.toString().trim();
 
-    let selectedTextElement: HTMLElement | null = null;
-
-    const node: Node = range.startContainer;
-
-    if (node.nodeType === Node.TEXT_NODE) {
-        const textContent = node.textContent || '';
-        if (textContent.includes(selectedText)) {
-            selectedTextElement = node.parentElement!;
-        } else {
-            let sibling = node.nextSibling;
-            while (sibling) {
-                if (sibling.nodeType === Node.ELEMENT_NODE) {
-                    const siblingText = sibling.textContent || '';
-                    if (siblingText.includes(selectedText)) {
-                        selectedTextElement = sibling as HTMLElement;
-                        break;
-                    }
-                }
-                if (sibling.nodeType === Node.TEXT_NODE) {
-                    const siblingText = sibling.textContent || '';
-                    if (siblingText.includes(selectedText)) {
-                        selectedTextElement = sibling.parentElement!;
-                        break;
-                    }
-                }
-                sibling = sibling.nextSibling;
-            }
-
-            if (!selectedTextElement) {
-                selectedTextElement = node.parentElement!;
-            }
-        }
-    } else {
-        const element = node as HTMLElement;
-
-        if (element.isContentEditable && element.getAttribute('contenteditable') === 'true') {
-            const firstChild = element.firstElementChild;
-            if (firstChild && firstChild.textContent?.includes(selectedText)) {
-                selectedTextElement = firstChild as HTMLElement;
-            } else {
-                selectedTextElement = element;
-            }
-        } else {
-            selectedTextElement = element;
-        }
-    }
-
+    const selectedTextElement = findSelectedTextElement(range, selectedText);
     if (!selectedTextElement) return null;
 
     const { top, centerX } = getToolbarPosition(range.getBoundingClientRect());
 
     return { top, centerX, selectedTextElement, range };
 };
+
+function findSelectedTextElement(range: Range, selectedText: string): HTMLElement | null {
+    const node = range.startContainer;
+
+    if (node.nodeType === Node.TEXT_NODE) {
+        return findElementFromTextNode(node as Text, selectedText);
+    }
+
+    return findElementFromElementNode(node as HTMLElement, selectedText);
+}
+
+function findElementFromTextNode(textNode: Text, selectedText: string): HTMLElement | null {
+    const textContent = textNode.textContent || '';
+
+    if (textContent.includes(selectedText)) {
+        return textNode.parentElement;
+    }
+
+    let sibling = textNode.nextSibling;
+    while (sibling) {
+        const siblingText = sibling.textContent || '';
+
+        if (siblingText.includes(selectedText)) {
+            return sibling.nodeType === Node.ELEMENT_NODE
+                ? sibling as HTMLElement
+                : sibling.parentElement;
+        }
+
+        sibling = sibling.nextSibling;
+    }
+
+    return textNode.parentElement;
+}
+
+function findElementFromElementNode(element: HTMLElement, selectedText: string): HTMLElement | null {
+    if (element.isContentEditable && element.getAttribute('contenteditable') === 'true') {
+        const firstChild = element.firstElementChild;
+
+        if (firstChild && firstChild.textContent?.includes(selectedText)) {
+            return firstChild as HTMLElement;
+        }
+    }
+
+    return element;
+}
 
 function getToolbarPosition(rect: DOMRect): { top: number, centerX: number } {
     const top = rect.top + window.scrollY - 50;

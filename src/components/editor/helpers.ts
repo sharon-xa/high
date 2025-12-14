@@ -88,26 +88,18 @@ export const isStyledText = (constNode: Node | null): { isStyled: boolean, typeO
     return { isStyled: false, typeOfStyle: null };
 };
 
+
 type SelectionDetails = {
     top: number;
-    left: number;
+    centerX: number;
 
-    blockElement: HTMLElement;
     selectedTextElement: HTMLElement | null;
-
-    startOfSelection: number;
-    endOfSelection: number;
+    range: Range;
 };
 
-export const getSelectionDetails = (onNoSelection?: () => void): SelectionDetails | null => {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || !selection.rangeCount) {
-        if (onNoSelection) onNoSelection();
-        return null;
-    }
+export const getSelectionDetails = (selection: Selection): SelectionDetails | null => {
 
     const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
 
     const selectedText = range.toString().trim();
 
@@ -160,29 +152,24 @@ export const getSelectionDetails = (onNoSelection?: () => void): SelectionDetail
 
     if (!selectedTextElement) return null;
 
-    let blockElement: HTMLElement | null = selectedTextElement;
-    while (blockElement) {
-        if (blockElement.isContentEditable && blockElement.getAttribute('contenteditable') === 'true') {
-            break;
-        }
-        blockElement = blockElement.parentElement;
-    }
+    const { top, centerX } = getToolbarPosition(range.getBoundingClientRect());
 
-    if (!blockElement || !blockElement.isContentEditable)
-        return null;
+    return { top, centerX, selectedTextElement, range };
+};
 
-    const preSelectionRange = range.cloneRange();
-    preSelectionRange.selectNodeContents(blockElement);
-    preSelectionRange.setEnd(range.startContainer, range.startOffset);
-    const start = preSelectionRange.toString().length;
-    const end = start + range.toString().length;
+function getToolbarPosition(rect: DOMRect): { top: number, centerX: number } {
+    const top = rect.top + window.scrollY - 50;
+
+    const toolbarSize = 174;
+    const halfToolbarSize = toolbarSize / 2;
+
+    let centerX = rect.left + window.scrollX + rect.width / 2;
+
+    if (centerX - halfToolbarSize < 0) centerX = halfToolbarSize + 10;
+    if (centerX + halfToolbarSize > window.innerWidth) centerX = window.innerWidth - halfToolbarSize - 10;
 
     return {
-        top: rect.top + window.scrollY - 50,
-        left: rect.left + window.scrollX + rect.width / 2,
-        blockElement: blockElement,
-        selectedTextElement: selectedTextElement,
-        startOfSelection: start,
-        endOfSelection: end,
+        top,
+        centerX
     };
-};
+}

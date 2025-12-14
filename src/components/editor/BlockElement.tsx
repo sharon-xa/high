@@ -16,7 +16,7 @@ type Props = {
 
 const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
     const { activeBlockIndex, updateBlockContent, setActiveBlock } = useEditorStore();
-    const { setHtml, setSelectedText, setShowToolbar, setToolbarPosition } = useToolbarStore();
+    const { setSelectedText, showToolbar, hideToolbar, setToolbarPosition, setRange } = useToolbarStore();
 
     const divRef = useRef<HTMLDivElement>(null);
 
@@ -40,24 +40,22 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
     }, [block]);
 
     const handleTextSelection = () => {
-        const selection = getSelectionDetails(() => setShowToolbar(false));
-        if (selection === null)
-            return;
+        const sel = window.getSelection();
+        if (!sel || sel.isCollapsed || !sel.rangeCount) {
+            hideToolbar();
+            return null;
+        }
 
-        setToolbarPosition(selection.top, selection.left);
-        setShowToolbar(true);
+        const selection = getSelectionDetails(sel);
+        if (selection === null) return;
+
+        setRange(selection.range);
+
+        setToolbarPosition(selection.top, selection.centerX);
+        showToolbar();
 
         const { isStyled, typeOfStyle } = isStyledText(selection.selectedTextElement);
-
-        const html = selection.blockElement.innerHTML;
-
-        setHtml(html);
-        setSelectedText({
-            isStyled,
-            typeOfStyle,
-            start: selection.startOfSelection,
-            end: selection.endOfSelection
-        });
+        setSelectedText({ isStyled, typeOfStyle });
     };
 
     if (block.type === "image") {
@@ -98,8 +96,14 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
 
                     updateBlockContent(index, content);
                 }}
-                onSelect={handleTextSelection}
-                onBlur={() => setTimeout(() => setShowToolbar(false), 150)}
+                onMouseUp={handleTextSelection}
+                onTouchEnd={handleTextSelection}
+                onKeyUp={(e) => {
+                    if (['Shift'].includes(e.key)) {
+                        handleTextSelection();
+                    }
+                }}
+                onBlur={() => setTimeout(() => hideToolbar(), 150)}
                 onFocus={() => setActiveBlock(index)}
                 autoFocus={index === activeBlockIndex}
                 className="text-editor-input"

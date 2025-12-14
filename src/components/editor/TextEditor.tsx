@@ -31,7 +31,7 @@ const TextEditor = () => {
         setActiveBlock,
     } = useEditorStore();
 
-    const { showToolbar } = useToolbarStore();
+    const { isToolbarVisible } = useToolbarStore();
     const { isCommandMenuOpen, setIsCommandMenuOpen } = useCommandMenuStore();
 
     useEffect(() => {
@@ -123,7 +123,7 @@ const TextEditor = () => {
                 />
 
                 <div className="flex flex-col gap-4">
-                    {!isMobile && showToolbar && <Toolbar />}
+                    {!isMobile && isToolbarVisible && <Toolbar />}
                     {!isMobile && isCommandMenuOpen && <CommandMenu />}
                     {blocks.map((block, i) => (
                         <BlockElement

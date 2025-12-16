@@ -50,12 +50,11 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
         if (selection === null) return;
 
         setRange(selection.range);
-
         setToolbarPosition(selection.top, selection.centerX);
         showToolbar();
 
-        const { isStyled, typeOfStyle } = isStyledText(selection.selectedTextElement);
-        setSelectedText({ isStyled, typeOfStyle });
+        const { isStyled, typesOfStyle } = isStyledText(selection.selectedTextElement);
+        setSelectedText({ isStyled, typesOfStyle });
     };
 
     if (block.type === "image") {

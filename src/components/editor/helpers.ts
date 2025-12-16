@@ -47,45 +47,66 @@ export const setCursorPosition = (element: HTMLDivElement, position: number): vo
     }
 };
 
-export const isStyledText = (constNode: Node | null): { isStyled: boolean, typeOfStyle: TextStylesCommand | null } => {
+type StyledText = {
+    isStyled: boolean;
+    typesOfStyle: Set<TextStylesCommand>;
+};
 
-    if (!constNode)
-        return { isStyled: false, typeOfStyle: null };
-
+export const isStyledText = (constNode: Node | null): StyledText => {
     let node: Node | null = constNode;
-    if (node.nodeType === Node.TEXT_NODE) {
-        node = node.parentNode;
+    console.log(node);
+
+    if (!node)
+        return { isStyled: false, typesOfStyle: new Set() };
+
+    // drill down to text node
+    while (node && node.nodeType !== Node.TEXT_NODE) {
+        if (node.hasChildNodes())
+            node = node.firstChild;
+        else break;
     }
 
     if (!node)
-        return { isStyled: false, typeOfStyle: null };
+        return { isStyled: false, typesOfStyle: new Set() };
+
+    if (node.nodeType === Node.TEXT_NODE)
+        node = node.parentNode;
+
+    if (!node)
+        return { isStyled: false, typesOfStyle: new Set() };
+
+    const styles: StyledText = { isStyled: false, typesOfStyle: new Set() };
 
     while (node && node.nodeType === Node.ELEMENT_NODE) {
         const element = node as HTMLElement;
 
         switch (element.tagName) {
             case "STRONG":
-            case "B":
-                return { isStyled: true, typeOfStyle: "bold" };
+                styles.typesOfStyle.add("bold");
+                break;
             case "CODE":
-                return { isStyled: true, typeOfStyle: "code" };
+                styles.typesOfStyle.add("code");
+                break;
             case "EM":
-            case "I":
-                return { isStyled: true, typeOfStyle: "italic" };
+                styles.typesOfStyle.add("italic");
+                break;
             case "A":
-                return { isStyled: true, typeOfStyle: "link" };
+                styles.typesOfStyle.add("link");
+                break;
             case "MARK":
-                return { isStyled: true, typeOfStyle: "mark" };
+                styles.typesOfStyle.add("mark");
+                break;
         }
 
-        if (element.isContentEditable) {
-            break;
-        }
+        // if (element.isContentEditable) break;
 
         node = node.parentElement;
     }
 
-    return { isStyled: false, typeOfStyle: null };
+    if (styles.typesOfStyle.size > 0) styles.isStyled = true;
+
+    console.log(styles);
+    return styles;
 };
 
 type SelectionDetails = {
@@ -169,4 +190,10 @@ function getToolbarPosition(rect: DOMRect): { top: number, centerX: number } {
         top,
         centerX
     };
+}
+
+export function setCursorAtEndOfText(prevElement: HTMLDivElement | null): void {
+    if (!prevElement) return;
+    const textSize = prevElement.innerText.length;
+    setCursorPosition(prevElement, textSize);
 }

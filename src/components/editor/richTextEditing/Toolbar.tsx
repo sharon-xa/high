@@ -6,7 +6,7 @@ import { Bold, Code, Highlighter, Italic, Link } from "lucide-react";
 const Toolbar = () => {
     const { selectedText, toolbarPosition, toggleStyle, applyLink } = useToolbarStore();
 
-    useEffect(() => { }, [selectedText.isStyled, selectedText.typeOfStyle]);
+    useEffect(() => { }, [selectedText.isStyled, selectedText.typesOfStyle]);
 
     if (toolbarPosition.top === 0 || toolbarPosition.centerX === 0) return;
 
@@ -28,28 +28,28 @@ const Toolbar = () => {
                 className="p-1"
                 buttonName="bold"
                 ButtonContent={Bold}
-                isActive={selectedText.typeOfStyle === "bold"}
+                isActive={selectedText.typesOfStyle.has("bold")}
             />
             <ActionButton
                 action={() => toggleStyle("italic")}
                 className="p-1"
                 buttonName="italic"
                 ButtonContent={Italic}
-                isActive={selectedText.typeOfStyle === "italic"}
+                isActive={selectedText.typesOfStyle.has("italic")}
             />
             <ActionButton
                 action={() => toggleStyle("code")}
                 className="p-1"
                 buttonName="code"
                 ButtonContent={Code}
-                isActive={selectedText.typeOfStyle === "code"}
+                isActive={selectedText.typesOfStyle.has("code")}
             />
             <ActionButton
                 action={() => toggleStyle("mark")}
                 className="p-1"
                 buttonName="mark"
                 ButtonContent={Highlighter}
-                isActive={selectedText.typeOfStyle === "mark"}
+                isActive={selectedText.typesOfStyle.has("mark")}
             />
             <ActionButton
                 action={() => {
@@ -59,7 +59,7 @@ const Toolbar = () => {
                 className="p-1"
                 buttonName="link"
                 ButtonContent={Link}
-                isActive={selectedText.typeOfStyle === "link"}
+                isActive={selectedText.typesOfStyle.has("link")}
             />
         </div >
     );

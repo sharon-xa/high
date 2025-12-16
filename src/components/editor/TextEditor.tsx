@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { useEffect, useRef } from "react";
-import { getCursorPosition, setCursorPosition } from "./helpers";
+import { getCursorPosition, setCursorAtEndOfText, setCursorPosition } from "./helpers";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
@@ -57,6 +57,8 @@ const TextEditor = () => {
                     if (!isCommandMenuOpen && blockIndex !== 0) {
                         e.preventDefault();
                         deleteBlock(blockIndex);
+                        const prevElement = divRefs.current[blockIndex - 1];
+                        setCursorAtEndOfText(prevElement);
                     }
 
                     if (isCommandMenuOpen) setIsCommandMenuOpen(false);
@@ -71,10 +73,7 @@ const TextEditor = () => {
                     e.preventDefault();
                     setActiveBlock(previousBlock);
                     const prevElement = divRefs.current[previousBlock];
-                    if (prevElement) {
-                        const textSize = prevElement.innerText.length;
-                        setCursorPosition(prevElement, textSize);
-                    }
+                    setCursorAtEndOfText(prevElement);
                 }
                 break;
             }

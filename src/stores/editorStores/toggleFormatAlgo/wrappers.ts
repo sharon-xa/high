@@ -1,3 +1,5 @@
+import { hasAncestorWithTag } from "./ancestors";
+
 export function wrapPartial(node: Text, start: number, end: number, tag: string, href?: string): void {
     if (start === 0 && end === node.length) {
         wrap(node, tag, href);
@@ -40,32 +42,14 @@ function wrap(node: Text, tag: string, href?: string): void {
     wrapper.appendChild(node);
 }
 
-export function unwrap(node: Text): void {
-    const parent = node.parentNode as HTMLElement;
+export function unwrapElement(element: HTMLElement): void {
+    const parent = element.parentNode;
     if (!parent) return;
 
-    const grandParent = parent.parentNode;
-    if (!grandParent) return;
-
-    grandParent.insertBefore(node, parent);
-    if (parent.childNodes.length === 0) {
-        grandParent.removeChild(parent);
-    }
-}
-
-function hasAncestorWithTag(node: Node, tag: string, href?: string): boolean {
-    let current = node.parentNode;
-
-    while (current && current.nodeType === Node.ELEMENT_NODE) {
-        const el = current as HTMLElement;
-
-        if (el.tagName === tag) {
-            if (tag !== "A") return true;
-            return el.getAttribute("href") === href;
-        }
-
-        current = current.parentNode;
+    // Move all children out, preserving order
+    while (element.firstChild) {
+        parent.insertBefore(element.firstChild, element);
     }
 
-    return false;
+    parent.removeChild(element);
 }

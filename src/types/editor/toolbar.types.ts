@@ -7,7 +7,7 @@ export type ToolbarPosition = {
 
 export type SelectedText = {
     isStyled: boolean;
-    typeOfStyle: TextStylesCommand | null;
+    typesOfStyle: Set<TextStylesCommand>;
 };
 
 type ToolbarState = {

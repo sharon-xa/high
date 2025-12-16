@@ -50,14 +50,14 @@ const MobileToolBar = () => {
                     buttonName="bold"
                     className="p-2"
                     ButtonContent={Bold}
-                    isActive={selectedText.typeOfStyle === "bold"}
+                    isActive={selectedText.typesOfStyle.has("bold")}
                 />
                 <ActionButton
                     action={() => toggleStyle("italic")}
                     className="p-2"
                     buttonName="italic"
                     ButtonContent={Italic}
-                    isActive={selectedText.typeOfStyle === "italic"}
+                    isActive={selectedText.typesOfStyle.has("italic")}
                 />
                 <ActionButton
                     action={() => {
@@ -67,21 +67,21 @@ const MobileToolBar = () => {
                     className="p-2"
                     buttonName="link"
                     ButtonContent={Link}
-                    isActive={selectedText.typeOfStyle === "link"}
+                    isActive={selectedText.typesOfStyle.has("link")}
                 />
                 <ActionButton
                     action={() => toggleStyle("code")}
                     className="p-2"
                     buttonName="code"
                     ButtonContent={Code}
-                    isActive={selectedText.typeOfStyle === "code"}
+                    isActive={selectedText.typesOfStyle.has("code")}
                 />
                 <ActionButton
                     action={() => toggleStyle("mark")}
                     className="p-2"
                     buttonName="mark"
                     ButtonContent={Highlighter}
-                    isActive={selectedText.typeOfStyle === "mark"}
+                    isActive={selectedText.typesOfStyle.has("mark")}
                 />
             </div>
         </div>

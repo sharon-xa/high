@@ -4,6 +4,7 @@ import type { ForwardRefExoticComponent, RefAttributes } from "react";
 type Props = {
     className?: string;
     buttonName: string;
+    tooltipDescription?: string;
     ButtonContent?: string | ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
 
     // The condition in which the button is considered active
@@ -13,7 +14,7 @@ type Props = {
     action: () => void;
 };
 
-const ActionButton = ({ className, buttonName, ButtonContent, isActive, action }: Props) => {
+const ActionButton = ({ className, buttonName, tooltipDescription, ButtonContent, isActive, action }: Props) => {
     return (
         <button
             className={`
@@ -24,6 +25,7 @@ const ActionButton = ({ className, buttonName, ButtonContent, isActive, action }
                 ${className}
                 `}
             onClick={() => action()}
+            title={tooltipDescription}
         >
             {ButtonContent ? <ButtonContent name={buttonName} size={22} strokeWidth={2} /> : buttonName}
         </button>

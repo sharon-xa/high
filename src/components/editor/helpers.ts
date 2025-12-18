@@ -54,7 +54,6 @@ type StyledText = {
 
 export const isStyledText = (constNode: Node | null): StyledText => {
     let node: Node | null = constNode;
-    console.log(node);
 
     if (!node)
         return { isStyled: false, typesOfStyle: new Set() };
@@ -105,7 +104,6 @@ export const isStyledText = (constNode: Node | null): StyledText => {
 
     if (styles.typesOfStyle.size > 0) styles.isStyled = true;
 
-    console.log(styles);
     return styles;
 };
 

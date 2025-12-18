@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useToolbarStore } from "../../../stores/editorStores/toolbarStore";
 import ActionButton from "./ActionButton";
-import { Bold, Code, Highlighter, Italic, Link } from "lucide-react";
+import { Bold, CodeXml, Highlighter, Italic, Link } from "lucide-react";
 
 const Toolbar = () => {
     const { selectedText, toolbarPosition, toggleStyle, applyLink } = useToolbarStore();
@@ -41,7 +41,7 @@ const Toolbar = () => {
                 action={() => toggleStyle("code")}
                 className="p-1"
                 buttonName="code"
-                ButtonContent={Code}
+                ButtonContent={CodeXml}
                 isActive={selectedText.typesOfStyle.has("code")}
             />
             <ActionButton

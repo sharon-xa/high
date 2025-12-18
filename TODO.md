@@ -1,7 +1,7 @@
 # TODO
 1. Put a clear seperation between blocks control and inside the block styling.
 2. Blocks actions:
-    - [ ] Insert a(n): Image, Seperator, Code Block, Iframe.
+    - [ ] Insert a(n): Image, Seperator, Code Block, embed.
     - [ ] Delete Block.
     - [ ] Move Block.
 3. Inside the block styles:
@@ -19,4 +19,4 @@
 # ISSUES
 1. For some reason when clicking bold to make some text bold it automatically select the next character.
 2. Test the toggleFormat function.
-3. 
+3. You need to double click on an applied style to unwrap it or destyle it.

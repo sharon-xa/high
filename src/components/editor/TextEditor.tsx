@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import { IS_MOBILE } from "../../lib/platform";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
@@ -40,61 +40,76 @@ const TextEditor = () => {
         }
     }, [activeBlockIndex]);
 
-    const keyDownOnBlock = (e: React.KeyboardEvent<HTMLDivElement>, blockIndex: number) => {
-        const cursorPosition = getCursorPosition(e.currentTarget);
+    type BlockKeyHandler = (
+        e: React.KeyboardEvent<HTMLDivElement>,
+        blockIndex: number
+    ) => void;
 
-        switch (e.key) {
-            case "Enter": {
-                e.preventDefault();
-                addBlock({ uuid: uuid(), type: "paragraph", content: "" }, blockIndex);
-                break;
-            }
-            case "Backspace": {
-                const block = blocks[blockIndex];
-                const blockHaveContentField = (block.type === "paragraph" || block.type === "code" || block.type === "header");
+    const blockKeyHandlers: Record<string, BlockKeyHandler> = {
+        Enter(e, blockIndex) {
+            if (isCommandMenuOpen) return;
 
-                if (blockHaveContentField && block.content === "") {
-                    if (!isCommandMenuOpen && blockIndex !== 0) {
-                        e.preventDefault();
-                        deleteBlock(blockIndex);
-                        const prevElement = divRefs.current[blockIndex - 1];
-                        setCursorAtEndOfText(prevElement);
-                    }
+            e.preventDefault();
+            addBlock({ uuid: uuid(), type: "paragraph", content: "" }, blockIndex);
+        },
 
-                    if (isCommandMenuOpen) setIsCommandMenuOpen(false);
-                } else if (block.type === "image" || block.type === "separator") {
-                    deleteBlock(blockIndex);
-                }
-                break;
-            }
-            case "ArrowUp": {
-                const previousBlock = blockIndex - 1;
-                if (blockIndex > 0 && cursorPosition <= 0) {
+        Backspace(e, blockIndex) {
+            const block = blocks[blockIndex];
+
+            const blockHaveContentField = (block.type === "paragraph" || block.type === "code" || block.type === "header");
+
+            if (blockHaveContentField && (block.content === "" || block.content === "/")) {
+                if (!isCommandMenuOpen && blockIndex !== 0) {
                     e.preventDefault();
-                    setActiveBlock(previousBlock);
-                    const prevElement = divRefs.current[previousBlock];
+                    deleteBlock(blockIndex);
+                    const prevElement = divRefs.current[blockIndex - 1];
                     setCursorAtEndOfText(prevElement);
                 }
-                break;
-            }
-            case "ArrowDown": {
-                const nextBlock = blockIndex + 1;
-                if (blocks.length > nextBlock && cursorPosition >= e.currentTarget.innerText.length) {
-                    e.preventDefault();
-                    setActiveBlock(nextBlock);
-                    const nextElement = divRefs.current[nextBlock];
-                    if (nextElement) setCursorPosition(nextElement, 0);
-                }
-                break;
-            }
-            case "/": {
-                if (blocks[blockIndex].type === "paragraph" && blocks[blockIndex].content === "") {
-                    e.preventDefault();
-                    setIsCommandMenuOpen(true);
-                }
-            }
+                if (isCommandMenuOpen)
+                    setIsCommandMenuOpen(false);
+            } else if (block.type === "image" || block.type === "separator") {
+                deleteBlock(blockIndex);
+            };
+        },
+
+        ArrowUp(e, blockIndex) {
+            if (isCommandMenuOpen) return;
+
+            const cursorPosition = getCursorPosition(e.currentTarget);
+            if (cursorPosition > 0) return;
+
+            e.preventDefault();
+            const prev = blockIndex - 1;
+            setActiveBlock(prev);
+            setCursorAtEndOfText(divRefs.current[prev]);
+        },
+
+        ArrowDown(e, blockIndex) {
+            if (isCommandMenuOpen) return;
+
+            const cursorPosition = getCursorPosition(e.currentTarget);
+            if (cursorPosition < e.currentTarget.innerText.length) return;
+
+            e.preventDefault();
+            const next = blockIndex + 1;
+            if (!blocks[next]) return;
+
+            const nextElement = divRefs.current[next];
+            if (!nextElement) return;
+
+            setActiveBlock(next);
+            setCursorPosition(nextElement, 0);
+        },
+
+        "/": (_, blockIndex) => {
+            const block = blocks[blockIndex];
+            if (block.type === "paragraph" && block.content === "")
+                setIsCommandMenuOpen(true);
         }
     };
+
+    const keyDownOnBlock = (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) =>
+        blockKeyHandlers[e.key]?.(e, blockIndex);
 
     return (
         <div className="min-h-96">

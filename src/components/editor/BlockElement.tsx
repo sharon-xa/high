@@ -59,7 +59,7 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
         setSelectedText({ isStyled, typesOfStyle });
     };
 
-    if (block.type === "image") {
+    if (block.type === "image")
         return (
             <div
                 ref={setRef}
@@ -70,13 +70,13 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
                 <img src={block.url} alt={block.alt} className="max-w-full rounded" />
             </div>
         );
-    } else if (block.type === "separator") {
+    else if (block.type === "separator")
         return (
             <div ref={setRef} className="my-4">
                 <hr className="border-t border-neutral-200" />
             </div>
         );
-    } else {
+    else
         return (
             <div
                 ref={(el) => {
@@ -109,7 +109,6 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
                 className="text-editor-input"
             />
         )
-    }
 }
 
 export default BlockElement;

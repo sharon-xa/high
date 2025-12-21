@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { immer } from 'zustand/middleware/immer';
 import { v4 as uuid } from "uuid";
 import type { EditorStore } from "../../types/editor/editor.types";
-import type { Block } from "../../types/editor/block.types";
+import type { Block, BlockType } from "../../types/editor/block.types";
 
 // TODO: what is debouncing? and do I need it?
 
@@ -90,6 +90,42 @@ export const useEditorStore = create<EditorStore>()(
                 state.blocks.splice(index + 1, 0, duplicatedBlock);
                 state.activeBlockIndex = index + 1;
             });
+        },
+
+        createBlock: (blockType: BlockType, headerLevel?: 1 | 2 | 3): Block => {
+            switch (blockType) {
+                case "image":
+                    return {
+                        uuid: uuid(),
+                        type: "image" as const,
+                        url: "",
+                        alt: "",
+                    };
+                case "separator":
+                    return {
+                        uuid: uuid(),
+                        type: "separator" as const,
+                    };
+                case "code":
+                    return {
+                        uuid: uuid(),
+                        type: "code" as const,
+                        content: "",
+                    };
+                case "header":
+                    return {
+                        uuid: uuid(),
+                        type: "header" as const,
+                        level: headerLevel || 1,
+                        content: "",
+                    };
+                case "paragraph":
+                    return {
+                        uuid: uuid(),
+                        type: "paragraph",
+                        content: "",
+                    };
+            }
         },
     }))
 );

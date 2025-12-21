@@ -1,4 +1,4 @@
-import type { Block } from "./block.types";
+import type { Block, BlockType } from "./block.types";
 
 export type EditorState = {
     title: string;
@@ -18,6 +18,9 @@ export type EditorAction = {
     reorderBlocks(sourceIndex: number, destinationIndex: number): void;
     setActiveBlock(index: number): void;
     duplicateBlock(index: number): void;
+
+    // 0 state change methods
+    createBlock(blockType: BlockType, headerLevel?: 1 | 2 | 3): Block;
 };
 
 export type EditorStore = EditorState & EditorAction;

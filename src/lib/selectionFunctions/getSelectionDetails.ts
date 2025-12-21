@@ -9,25 +9,73 @@ export const getSelectionDetails = (selection: Selection): SelectionDetails | nu
 
     const range = selection.getRangeAt(0);
 
-    const { top, centerX } = getToolbarPosition(range.getBoundingClientRect());
+    const toolbarWidth = 174;
+    const toolbarHeight = 50;
+    const { top, centerX } = getObjectPosition(range.getBoundingClientRect(), toolbarWidth, toolbarHeight);
 
     return { top, centerX, range };
 };
 
 
-function getToolbarPosition(rect: DOMRect): { top: number, centerX: number } {
-    const top = rect.top + window.scrollY - 50;
+export function getObjectPosition(rect: DOMRect, objectWidth: number, objectHeight: number): { top: number, centerX: number } {
+    const top = rect.top + window.scrollY - objectHeight;
 
-    const toolbarSize = 174;
-    const halfToolbarSize = toolbarSize / 2;
+    const halfObjectWidth = objectWidth / 2;
 
     let centerX = rect.left + window.scrollX + rect.width / 2;
 
-    if (centerX - halfToolbarSize < 0) centerX = halfToolbarSize + 10;
-    if (centerX + halfToolbarSize > window.innerWidth) centerX = window.innerWidth - halfToolbarSize - 10;
+    if (centerX - halfObjectWidth < 0) centerX = halfObjectWidth + 10;
+    if (centerX + halfObjectWidth > window.innerWidth) centerX = window.innerWidth - halfObjectWidth - 10;
 
     return {
         top,
         centerX
+    };
+}
+
+export function getObjectPositionXY(
+    rect: DOMRect,
+    objectWidth: number,
+    objectHeight: number
+): { centerX: number; centerY: number } {
+    const margin = 10;
+
+    const halfObjectWidth = objectWidth / 2;
+    let centerX = rect.left + window.scrollX + rect.width / 2;
+
+    if (centerX - halfObjectWidth < margin) {
+        centerX = halfObjectWidth + margin;
+    }
+
+    if (centerX + halfObjectWidth > window.innerWidth - margin) {
+        centerX = window.innerWidth - halfObjectWidth - margin;
+    }
+
+    const spaceAbove = rect.top;
+    const spaceBelow = window.innerHeight - rect.bottom;
+
+    let centerY: number;
+
+    if (spaceAbove >= objectHeight + margin) {
+        centerY =
+            rect.top +
+            window.scrollY -
+            objectHeight / 2 -
+            margin;
+    } else if (spaceBelow >= objectHeight + margin) {
+        centerY =
+            rect.bottom +
+            window.scrollY +
+            objectHeight / 2 +
+            margin;
+    } else {
+        centerY =
+            window.scrollY +
+            window.innerHeight / 2;
+    }
+
+    return {
+        centerX,
+        centerY
     };
 }

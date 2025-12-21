@@ -7,7 +7,7 @@
 3. Inside the block styles:
     - [x] bold.
     - [x] italic.
-    - [ ] link.
+    - [x] link.
     - [x] mark.
     - [x] code.
 4. On mobile:
@@ -22,3 +22,6 @@
 - [ ] You need to double click on an applied style to unwrap it or destyle it.
 - [ ] Removing styled text we'll make the cursor go back to the beginning.
 - [ ] Selecting styled text then trying to destyle it won't work on first click, you need a second click for it to work.
+
+# Features
+- [ ] Add placeholder text for every block, let the user know that they can press "/" for a command menu.

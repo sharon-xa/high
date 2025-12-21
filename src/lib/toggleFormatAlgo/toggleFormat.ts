@@ -1,4 +1,4 @@
-import type { TextStylesCommand } from "../../../types/editor/toolbar.types";
+import type { TextStylesCommand } from "../../types/editor/toolbar.types";
 import { findCommonFormattingAncestor, hasAncestorWithTag } from "./ancestors";
 import { restoreSelection, saveSelection } from "./selectionStateSaveAndRestore";
 import { flattenNestedTags, mergeAdjacentTags, removeEmptyFormatting } from "./toggleFormatCleanUpFunctions";

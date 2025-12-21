@@ -1,9 +1,10 @@
 import { v4 as uuid } from "uuid";
 import { useEffect, useRef } from "react";
-import { getCursorPosition, setCursorAtEndOfText, setCursorPosition } from "./helpers";
+import { IS_MOBILE } from "../../lib/platform";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
+import { getCursorPosition, setCursorAtEndOfText, setCursorPosition } from "../../lib/selectionFunctions/getAndSetSelection";
 
 import BlockElement from "./BlockElement";
 import Toolbar from "./richTextEditing/Toolbar";
@@ -14,7 +15,6 @@ import type React from "react";
 
 const TextEditor = () => {
     const divRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const isMobile = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     const {
         // title
@@ -122,8 +122,8 @@ const TextEditor = () => {
                 />
 
                 <div className="flex flex-col gap-4">
-                    {!isMobile && isToolbarVisible && <Toolbar />}
-                    {!isMobile && isCommandMenuOpen && <CommandMenu />}
+                    {!IS_MOBILE && isToolbarVisible && <Toolbar />}
+                    {!IS_MOBILE && isCommandMenuOpen && <CommandMenu />}
                     {blocks.map((block, i) => (
                         <BlockElement
                             key={block.uuid}
@@ -135,7 +135,7 @@ const TextEditor = () => {
                     ))}
                 </div>
             </div>
-            {isMobile && <MobileToolBar />}
+            {IS_MOBILE && <MobileToolBar />}
         </div>
     );
 };

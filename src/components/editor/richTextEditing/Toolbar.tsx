@@ -53,8 +53,12 @@ const Toolbar = () => {
             />
             <ActionButton
                 action={() => {
-                    const url = window.prompt("Link URL");
-                    if (url) applyLink(url);
+                    if (selectedText.typesOfStyle.has("link"))
+                        applyLink("");
+                    else {
+                        const url = window.prompt("Link URL");
+                        if (url) applyLink(url);
+                    }
                 }}
                 className="p-1"
                 buttonName="link"

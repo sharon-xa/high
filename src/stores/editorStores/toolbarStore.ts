@@ -1,8 +1,9 @@
 import { create } from "zustand";
 
 import type { ToolbarStore } from "../../types/editor/toolbar.types";
-import { toggleFormat } from "./toggleFormatAlgo/toggleFormat";
-import { getSelectionDetails, isStyledText } from "../../components/editor/helpers";
+import { toggleFormat } from "../../lib/toggleFormatAlgo/toggleFormat";
+import { isSelectedTextStyled } from "../../lib/selectionFunctions/isSelectedTextStyled";
+import { getSelectionDetails } from "../../lib/selectionFunctions/getSelectionDetails";
 
 export const useToolbarStore = create<ToolbarStore>((set, get) => ({
     isToolbarVisible: false,
@@ -34,7 +35,7 @@ export const useToolbarStore = create<ToolbarStore>((set, get) => ({
         const selection = getSelectionDetails(sel);
         if (selection === null) return;
 
-        const { isStyled, typesOfStyle } = isStyledText(selection.selectedTextElement);
+        const { isStyled, typesOfStyle } = isSelectedTextStyled(sel);
         set({ selectedText: { isStyled, typesOfStyle } });
     },
     applyLink: (url) => {

@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useToolbarStore } from "../../../stores/editorStores/toolbarStore";
 import MobileToolbarTextStyleActions from "./MobileToolbarTextStyleActions";
 import MobileToolbarBlockActions from "./MobileToolbarBlockActions";
+import { IS_MOBILE } from "../../../lib/platform";
 
 const MobileToolBar = () => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const [keyboardInset, setKeyboardInset] = useState(0);
     const { isToolbarVisible } = useToolbarStore();
 
@@ -34,7 +34,7 @@ const MobileToolBar = () => {
             visualViewport.removeEventListener('resize', handleResize);
             visualViewport.removeEventListener('scroll', handleResize);
         };
-    }, [isMobile]);
+    }, [IS_MOBILE]);
 
     return (
         <div
@@ -45,7 +45,11 @@ const MobileToolBar = () => {
             }}
         >
             <div className="flex items-center justify-center gap-2 py-1">
-                {isToolbarVisible ? <MobileToolbarTextStyleActions /> : <MobileToolbarBlockActions />}
+                {
+                    isToolbarVisible ?
+                        <MobileToolbarTextStyleActions /> :
+                        <MobileToolbarBlockActions />
+                }
             </div>
         </div>
     )

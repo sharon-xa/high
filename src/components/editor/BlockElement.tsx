@@ -1,17 +1,19 @@
-import { useEffect, useRef } from "react";
-import { getCursorPosition, getSelectionDetails, isStyledText, setCursorPosition } from "./helpers";
+import type { Block, CodeBlock, HeaderBlock, ParagraphBlock } from "../../types/editor/block.types";
+
+import { useEffect, useRef, type FormEvent, type KeyboardEvent } from "react";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
-
-import type React from "react";
-import type { Block, CodeBlock, HeaderBlock, ParagraphBlock } from "../../types/editor/block.types";
+import { IS_MOBILE } from "../../lib/platform";
+import { getCursorPosition, setCursorPosition } from "../../lib/selectionFunctions/getAndSetSelection";
+import { getSelectionDetails } from "../../lib/selectionFunctions/getSelectionDetails";
+import { isSelectedTextStyled } from "../../lib/selectionFunctions/isSelectedTextStyled";
 
 type Props = {
     block: Block;
     index: number;
 
     setRef: (el: HTMLDivElement | null) => void;
-    keyDownOnBlock: (e: React.KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
+    keyDownOnBlock: (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
 };
 
 const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
@@ -53,7 +55,7 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
         setToolbarPosition(selection.top, selection.centerX);
         showToolbar();
 
-        const { isStyled, typesOfStyle } = isStyledText(selection.selectedTextElement);
+        const { isStyled, typesOfStyle } = isSelectedTextStyled(sel);
         setSelectedText({ isStyled, typesOfStyle });
     };
 
@@ -83,26 +85,25 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
                 }}
                 contentEditable
                 suppressContentEditableWarning
-                onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
-                onInput={(e: React.FormEvent<HTMLDivElement>) => {
+                onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
+                onInput={(e: FormEvent<HTMLDivElement>) => {
                     let content = e.currentTarget.innerHTML;
 
                     // bruh, the browser adds a newline char or <br> tag by default when the contentEditable property is set to true
                     content = content
-                        .replace(/^<br>$/, '') // Remove standalone br
-                        .replace(/^<div><br><\/div>$/, '') // Remove empty div with br
+                        .replace(/^<br>$/, '') // remove standalone br
+                        .replace(/^<div><br><\/div>$/, '') // remove empty div with br
                         .trim();
 
                     updateBlockContent(index, content);
                 }}
-                onMouseUp={handleTextSelection}
-                onTouchEnd={handleTextSelection}
+                onSelect={handleTextSelection}
                 onKeyUp={(e) => {
-                    if (['Shift'].includes(e.key)) {
-                        handleTextSelection();
-                    }
+                    if (['Shift'].includes(e.key)) handleTextSelection();
                 }}
-                onBlur={() => setTimeout(() => hideToolbar(), 150)}
+                onBlur={() => {
+                    if (!IS_MOBILE) setTimeout(() => hideToolbar(), 150);
+                }}
                 onFocus={() => setActiveBlock(index)}
                 autoFocus={index === activeBlockIndex}
                 className="text-editor-input"

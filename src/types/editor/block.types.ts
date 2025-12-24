@@ -5,13 +5,15 @@ export type BlockType =
     "separator" |
     "code";
 
+export type HeaderLevels = 1 | 2 | 3;
+
 type BaseBlock = {
     uuid: string;
 }
 
 export type HeaderBlock = BaseBlock & {
     type: "header";
-    level: 1 | 2 | 3;
+    level: HeaderLevels;
     content: string;
 }
 

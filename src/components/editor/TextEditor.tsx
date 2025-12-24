@@ -6,10 +6,10 @@ import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
 import { getCursorPosition, setCursorAtEndOfText, setCursorPosition } from "../../lib/selectionFunctions/getAndSetSelection";
 
-import BlockElement from "./BlockElement";
-import Toolbar from "./richTextEditing/Toolbar";
-import CommandMenu from "./richTextEditing/CommandMenu";
-import MobileToolBar from "./richTextEditing/MobileToolbar";
+import BlockElement from "./block/BlockElement";
+import Toolbar from "./blockActions/Toolbar";
+import CommandMenu from "./blockActions/CommandMenu";
+import MobileToolBar from "./blockActions/MobileToolbar";
 
 import type React from "react";
 
@@ -58,17 +58,22 @@ const TextEditor = () => {
 
             const blockHaveContentField = (block.type === "paragraph" || block.type === "code" || block.type === "header");
 
-            if (blockHaveContentField && (block.content === "" || block.content === "/")) {
-                if (!isCommandMenuOpen && blockIndex !== 0) {
-                    e.preventDefault();
-                    deleteBlock(blockIndex);
-                    const prevElement = divRefs.current[blockIndex - 1];
-                    setCursorAtEndOfText(prevElement);
-                }
-                if (isCommandMenuOpen)
-                    setIsCommandMenuOpen(false);
-            } else if (block.type === "image" || block.type === "separator") {
+            if (blockHaveContentField && block.content === "/" && isCommandMenuOpen) {
+                setIsCommandMenuOpen(false);
+                return;
+            }
+
+            if (blockHaveContentField && block.content === "" && blockIndex !== 0) {
+                e.preventDefault();
                 deleteBlock(blockIndex);
+                const prevElement = divRefs.current[blockIndex - 1];
+                setCursorAtEndOfText(prevElement);
+                return;
+            }
+
+            if (block.type === "image" || block.type === "separator") {
+                deleteBlock(blockIndex);
+                return;
             };
         },
 
@@ -103,8 +108,10 @@ const TextEditor = () => {
 
         "/": (_, blockIndex) => {
             const block = blocks[blockIndex];
-            if (block.type === "paragraph" && block.content === "")
-                setIsCommandMenuOpen(true);
+            if (block.type === "paragraph") {
+                if (block.content === "") setIsCommandMenuOpen(true);
+                if (block.content === "/") setIsCommandMenuOpen(false);
+            }
         }
     };
 

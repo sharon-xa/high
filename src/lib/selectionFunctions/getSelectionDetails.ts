@@ -41,7 +41,7 @@ export function getObjectPositionXY(
     const margin = 10;
 
     const halfObjectWidth = objectWidth / 2;
-    let centerX = rect.left + window.scrollX + rect.width / 2;
+    let centerX = rect.left + rect.width / 2;
 
     if (centerX - halfObjectWidth < margin) {
         centerX = halfObjectWidth + margin;
@@ -57,21 +57,11 @@ export function getObjectPositionXY(
     let centerY: number;
 
     if (spaceAbove >= objectHeight + margin) {
-        centerY =
-            rect.top +
-            window.scrollY -
-            objectHeight / 2 -
-            margin;
+        centerY = rect.top - objectHeight / 2 - margin;
     } else if (spaceBelow >= objectHeight + margin) {
-        centerY =
-            rect.bottom +
-            window.scrollY +
-            objectHeight / 2 +
-            margin;
+        centerY = rect.bottom + objectHeight / 2 + margin;
     } else {
-        centerY =
-            window.scrollY +
-            window.innerHeight / 2;
+        centerY = window.innerHeight / 2;
     }
 
     return {

@@ -19,8 +19,7 @@
 # ISSUES
 - [x] For some reason when clicking bold to make some text bold it automatically select the next character.
 - [ ] Test the toggleFormat function.
-- [ ] You need to double click on an applied style to unwrap it or destyle it.
-- [ ] Removing styled text we'll make the cursor go back to the beginning.
+- [ ] Removing styled text will make the cursor go back to the beginning.
 - [ ] Selecting styled text then trying to destyle it won't work on first click, you need a second click for it to work.
 
 # Features

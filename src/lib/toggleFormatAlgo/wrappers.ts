@@ -1,55 +1,61 @@
 import { hasAncestorWithTag } from "./ancestors";
 
-export function wrapPartial(node: Text, start: number, end: number, tag: string, href?: string): void {
-    if (start === 0 && end === node.length) {
-        wrap(node, tag, href);
-        return;
-    }
+export function wrapPartial(
+	node: Text,
+	start: number,
+	end: number,
+	tag: string,
+	href?: string
+): void {
+	if (start === 0 && end === node.length) {
+		wrap(node, tag, href);
+		return;
+	}
 
-    // Split the text node if needed
-    const textContent = node.textContent || '';
+	// Split the text node if needed
+	const textContent = node.textContent || "";
 
-    if (start > 0) {
-        const beforeText = textContent.substring(0, start);
-        const beforeNode = document.createTextNode(beforeText);
-        node.parentNode?.insertBefore(beforeNode, node);
-    }
+	if (start > 0) {
+		const beforeText = textContent.substring(0, start);
+		const beforeNode = document.createTextNode(beforeText);
+		node.parentNode?.insertBefore(beforeNode, node);
+	}
 
-    const selectedText = textContent.substring(start, end);
-    const selectedNode = document.createTextNode(selectedText);
-    node.parentNode?.insertBefore(selectedNode, node);
-    wrap(selectedNode, tag, href);
+	const selectedText = textContent.substring(start, end);
+	const selectedNode = document.createTextNode(selectedText);
+	node.parentNode?.insertBefore(selectedNode, node);
+	wrap(selectedNode, tag, href);
 
-    if (end < textContent.length) {
-        const afterText = textContent.substring(end);
-        const afterNode = document.createTextNode(afterText);
-        node.parentNode?.insertBefore(afterNode, node);
-    }
+	if (end < textContent.length) {
+		const afterText = textContent.substring(end);
+		const afterNode = document.createTextNode(afterText);
+		node.parentNode?.insertBefore(afterNode, node);
+	}
 
-    node.parentNode?.removeChild(node);
+	node.parentNode?.removeChild(node);
 }
 
 function wrap(node: Text, tag: string, href?: string): void {
-    if (hasAncestorWithTag(node, tag, href)) return;
+	if (hasAncestorWithTag(node, tag, href)) return;
 
-    const parent = node.parentNode;
-    if (!parent) return;
+	const parent = node.parentNode;
+	if (!parent) return;
 
-    const wrapper = document.createElement(tag);
-    if (tag === "A" && href) wrapper.setAttribute("href", href);
+	const wrapper = document.createElement(tag);
+	if (tag === "A" && href) wrapper.setAttribute("href", href);
 
-    parent.insertBefore(wrapper, node);
-    wrapper.appendChild(node);
+	parent.insertBefore(wrapper, node);
+	wrapper.appendChild(node);
 }
 
 export function unwrapElement(element: HTMLElement): void {
-    const parent = element.parentNode;
-    if (!parent) return;
+	const parent = element.parentNode;
+	if (!parent) return;
 
-    // Move all children out, preserving order
-    while (element.firstChild) {
-        parent.insertBefore(element.firstChild, element);
-    }
+	// Move all children out, preserving order
+	while (element.firstChild) {
+		parent.insertBefore(element.firstChild, element);
+	}
 
-    parent.removeChild(element);
+	parent.removeChild(element);
 }

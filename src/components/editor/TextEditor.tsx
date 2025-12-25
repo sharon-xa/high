@@ -4,7 +4,11 @@ import { IS_MOBILE } from "../../lib/platform";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
-import { getCursorPosition, setCursorAtEndOfText, setCursorPosition } from "../../lib/selectionFunctions/getAndSetSelection";
+import {
+	getCursorPosition,
+	setCursorAtEndOfText,
+	setCursorPosition,
+} from "../../lib/selectionFunctions/getAndSetSelection";
 
 import BlockElement from "./block/BlockElement";
 import Toolbar from "./blockActions/Toolbar";
@@ -14,152 +18,154 @@ import MobileToolBar from "./blockActions/MobileToolbar";
 import type React from "react";
 
 const TextEditor = () => {
-    const divRefs = useRef<(HTMLDivElement | null)[]>([]);
+	const divRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const {
-        // title
-        title,
-        updateTitle,
+	const {
+		// title
+		title,
+		updateTitle,
 
-        // blocks
-        blocks,
-        addBlock,
-        deleteBlock,
+		// blocks
+		blocks,
+		addBlock,
+		deleteBlock,
 
-        // activity
-        activeBlockIndex,
-        setActiveBlock,
-    } = useEditorStore();
+		// activity
+		activeBlockIndex,
+		setActiveBlock,
+	} = useEditorStore();
 
-    const { isToolbarVisible } = useToolbarStore();
-    const { isCommandMenuOpen, setIsCommandMenuOpen } = useCommandMenuStore();
+	const { isToolbarVisible } = useToolbarStore();
+	const { isCommandMenuOpen, setIsCommandMenuOpen } = useCommandMenuStore();
 
-    useEffect(() => {
-        if (activeBlockIndex !== null && activeBlockIndex !== -1 && divRefs.current[activeBlockIndex]) {
-            divRefs.current[activeBlockIndex]?.focus();
-        }
-    }, [activeBlockIndex]);
+	useEffect(() => {
+		if (
+			activeBlockIndex !== null &&
+			activeBlockIndex !== -1 &&
+			divRefs.current[activeBlockIndex]
+		) {
+			divRefs.current[activeBlockIndex]?.focus();
+		}
+	}, [activeBlockIndex]);
 
-    type BlockKeyHandler = (
-        e: React.KeyboardEvent<HTMLDivElement>,
-        blockIndex: number
-    ) => void;
+	type BlockKeyHandler = (e: React.KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
 
-    const blockKeyHandlers: Record<string, BlockKeyHandler> = {
-        Enter(e, blockIndex) {
-            if (isCommandMenuOpen) return;
+	const blockKeyHandlers: Record<string, BlockKeyHandler> = {
+		Enter(e, blockIndex) {
+			if (isCommandMenuOpen) return;
 
-            e.preventDefault();
-            addBlock({ uuid: uuid(), type: "paragraph", content: "" }, blockIndex);
-        },
+			e.preventDefault();
+			addBlock({ uuid: uuid(), type: "paragraph", content: "" }, blockIndex);
+		},
 
-        Backspace(e, blockIndex) {
-            const block = blocks[blockIndex];
+		Backspace(e, blockIndex) {
+			const block = blocks[blockIndex];
 
-            const blockHaveContentField = (block.type === "paragraph" || block.type === "code" || block.type === "header");
+			const blockHaveContentField =
+				block.type === "paragraph" || block.type === "code" || block.type === "header";
 
-            if (blockHaveContentField && block.content === "/" && isCommandMenuOpen) {
-                setIsCommandMenuOpen(false);
-                return;
-            }
+			if (blockHaveContentField && block.content === "/" && isCommandMenuOpen) {
+				setIsCommandMenuOpen(false);
+				return;
+			}
 
-            if (blockHaveContentField && block.content === "" && blockIndex !== 0) {
-                e.preventDefault();
-                deleteBlock(blockIndex);
-                const prevElement = divRefs.current[blockIndex - 1];
-                setCursorAtEndOfText(prevElement);
-                return;
-            }
+			if (blockHaveContentField && block.content === "" && blockIndex !== 0) {
+				e.preventDefault();
+				deleteBlock(blockIndex);
+				const prevElement = divRefs.current[blockIndex - 1];
+				setCursorAtEndOfText(prevElement);
+				return;
+			}
 
-            if (block.type === "image" || block.type === "separator") {
-                deleteBlock(blockIndex);
-                return;
-            };
-        },
+			if (block.type === "image" || block.type === "separator") {
+				deleteBlock(blockIndex);
+				return;
+			}
+		},
 
-        ArrowUp(e, blockIndex) {
-            if (isCommandMenuOpen) return;
+		ArrowUp(e, blockIndex) {
+			if (isCommandMenuOpen) return;
 
-            const cursorPosition = getCursorPosition(e.currentTarget);
-            if (cursorPosition > 0) return;
+			const cursorPosition = getCursorPosition(e.currentTarget);
+			if (cursorPosition > 0) return;
 
-            e.preventDefault();
-            const prev = blockIndex - 1;
-            setActiveBlock(prev);
-            setCursorAtEndOfText(divRefs.current[prev]);
-        },
+			e.preventDefault();
+			const prev = blockIndex - 1;
+			setActiveBlock(prev);
+			setCursorAtEndOfText(divRefs.current[prev]);
+		},
 
-        ArrowDown(e, blockIndex) {
-            if (isCommandMenuOpen) return;
+		ArrowDown(e, blockIndex) {
+			if (isCommandMenuOpen) return;
 
-            const cursorPosition = getCursorPosition(e.currentTarget);
-            if (cursorPosition < e.currentTarget.innerText.length) return;
+			const cursorPosition = getCursorPosition(e.currentTarget);
+			if (cursorPosition < e.currentTarget.innerText.length) return;
 
-            e.preventDefault();
-            const next = blockIndex + 1;
-            if (!blocks[next]) return;
+			e.preventDefault();
+			const next = blockIndex + 1;
+			if (!blocks[next]) return;
 
-            const nextElement = divRefs.current[next];
-            if (!nextElement) return;
+			const nextElement = divRefs.current[next];
+			if (!nextElement) return;
 
-            setActiveBlock(next);
-            setCursorPosition(nextElement, 0);
-        },
+			setActiveBlock(next);
+			setCursorPosition(nextElement, 0);
+		},
 
-        "/": (_, blockIndex) => {
-            const block = blocks[blockIndex];
-            if (block.type === "paragraph") {
-                if (block.content === "") setIsCommandMenuOpen(true);
-                if (block.content === "/") setIsCommandMenuOpen(false);
-            }
-        }
-    };
+		"/": (_, blockIndex) => {
+			const block = blocks[blockIndex];
+			if (block.type === "paragraph") {
+				if (block.content === "") setIsCommandMenuOpen(true);
+				if (block.content === "/") setIsCommandMenuOpen(false);
+			}
+		},
+	};
 
-    const keyDownOnBlock = (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) =>
-        blockKeyHandlers[e.key]?.(e, blockIndex);
+	const keyDownOnBlock = (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) =>
+		blockKeyHandlers[e.key]?.(e, blockIndex);
 
-    return (
-        <div className="min-h-96">
-            <div className="flex flex-col gap-6">
-                <textarea
-                    className="text-editor-input resize-none overflow-hidden h-auto text-4xl font-bold"
-                    value={title}
-                    placeholder={title ? "" : "Title..."}
-                    rows={1}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                        if (e.key === "Enter") {
-                            e.preventDefault();
-                            setActiveBlock(0);
-                            divRefs.current[0]?.focus();
-                        }
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                        updateTitle(e.currentTarget.value)
-                    }
-                    onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                        const target = e.currentTarget;
-                        target.style.height = 'auto';
-                        target.style.height = target.scrollHeight + 'px';
-                    }}
-                />
+	return (
+		<div className="min-h-96">
+			<div className="flex flex-col gap-6">
+				<textarea
+					className="text-editor-input resize-none overflow-hidden h-auto text-4xl font-bold"
+					value={title}
+					placeholder={title ? "" : "Title..."}
+					rows={1}
+					onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+							setActiveBlock(0);
+							divRefs.current[0]?.focus();
+						}
+					}}
+					onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+						updateTitle(e.currentTarget.value)
+					}
+					onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+						const target = e.currentTarget;
+						target.style.height = "auto";
+						target.style.height = target.scrollHeight + "px";
+					}}
+				/>
 
-                <div className="flex flex-col gap-4">
-                    {!IS_MOBILE && isToolbarVisible && <Toolbar />}
-                    {!IS_MOBILE && isCommandMenuOpen && <CommandMenu />}
-                    {blocks.map((block, i) => (
-                        <BlockElement
-                            key={block.uuid}
-                            index={i}
-                            block={block}
-                            keyDownOnBlock={keyDownOnBlock}
-                            setRef={(el) => divRefs.current[i] = el}
-                        />
-                    ))}
-                </div>
-            </div>
-            {IS_MOBILE && <MobileToolBar />}
-        </div>
-    );
+				<div className="flex flex-col gap-4">
+					{!IS_MOBILE && isToolbarVisible && <Toolbar />}
+					{!IS_MOBILE && isCommandMenuOpen && <CommandMenu />}
+					{blocks.map((block, i) => (
+						<BlockElement
+							key={block.uuid}
+							index={i}
+							block={block}
+							keyDownOnBlock={keyDownOnBlock}
+							setRef={(el) => (divRefs.current[i] = el)}
+						/>
+					))}
+				</div>
+			</div>
+			{IS_MOBILE && <MobileToolBar />}
+		</div>
+	);
 };
 
 export default TextEditor;

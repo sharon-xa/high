@@ -13,63 +13,63 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,
-      gcTime: 1000 * 60 * 10,
-      retry: 1,
-      refetchOnWindowFocus: false,
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-    },
-    mutations: {
-      retry: 0,
-    },
-  },
+	defaultOptions: {
+		queries: {
+			staleTime: 1000 * 60 * 5,
+			gcTime: 1000 * 60 * 10,
+			retry: 1,
+			refetchOnWindowFocus: false,
+			refetchOnMount: true,
+			refetchOnReconnect: true,
+		},
+		mutations: {
+			retry: 0,
+		},
+	},
 });
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    errorElement: <Error />,
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: "auth",
-        element: (
-          <PublicOnlyRoute>
-            <Auth />
-          </PublicOnlyRoute>
-        )
-      },
-      {
-        path: "new-post",
-        element: <NewPost />,
-      },
-      {
-        path: "settings",
-        element: <Settings />,
-      },
-      {
-        path: "profile",
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        )
-      },
-    ],
-  },
+	{
+		path: "/",
+		element: <Root />,
+		errorElement: <Error />,
+		children: [
+			{
+				index: true,
+				element: <HomePage />,
+			},
+			{
+				path: "auth",
+				element: (
+					<PublicOnlyRoute>
+						<Auth />
+					</PublicOnlyRoute>
+				),
+			},
+			{
+				path: "new-post",
+				element: <NewPost />,
+			},
+			{
+				path: "settings",
+				element: <Settings />,
+			},
+			{
+				path: "profile",
+				element: (
+					<ProtectedRoute>
+						<Profile />
+					</ProtectedRoute>
+				),
+			},
+		],
+	},
 ]);
 
 export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-};
+	return (
+		<QueryClientProvider client={queryClient}>
+			<RouterProvider router={router} />
+		</QueryClientProvider>
+	);
+}

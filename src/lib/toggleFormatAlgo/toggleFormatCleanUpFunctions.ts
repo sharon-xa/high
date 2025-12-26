@@ -5,11 +5,8 @@ export function removeEmptyFormatting(root: Node) {
 
 	let el = walker.nextNode() as Element | null;
 	while (el) {
-		if (
-			["STRONG", "EM", "CODE", "MARK", "A"].includes(el.tagName) &&
-			el.textContent?.trim() === ""
-		) {
-			toRemove.push(el);
+		if (["STRONG", "EM", "CODE", "MARK", "A"].includes(el.tagName)) {
+			if (!el.textContent) toRemove.push(el);
 		}
 		el = walker.nextNode() as Element | null;
 	}

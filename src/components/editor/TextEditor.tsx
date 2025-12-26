@@ -5,9 +5,9 @@ import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
 import { useCommandMenuStore } from "../../stores/editorStores/commandMenuStore";
 import {
-	getCursorPosition,
-	setCursorAtEndOfText,
-	setCursorPosition,
+	getCaretPosition,
+	setCaretAtEndOfText,
+	setCaretPosition,
 } from "../../lib/selectionFunctions/getAndSetSelection";
 
 import BlockElement from "./block/BlockElement";
@@ -73,7 +73,7 @@ const TextEditor = () => {
 				e.preventDefault();
 				deleteBlock(blockIndex);
 				const prevElement = divRefs.current[blockIndex - 1];
-				setCursorAtEndOfText(prevElement);
+				setCaretAtEndOfText(prevElement);
 				return;
 			}
 
@@ -86,20 +86,20 @@ const TextEditor = () => {
 		ArrowUp(e, blockIndex) {
 			if (isCommandMenuOpen) return;
 
-			const cursorPosition = getCursorPosition(e.currentTarget);
-			if (cursorPosition > 0) return;
+			const caretPosition = getCaretPosition(e.currentTarget);
+			if (caretPosition > 0) return;
 
 			e.preventDefault();
 			const prev = blockIndex - 1;
 			setActiveBlock(prev);
-			setCursorAtEndOfText(divRefs.current[prev]);
+			setCaretAtEndOfText(divRefs.current[prev]);
 		},
 
 		ArrowDown(e, blockIndex) {
 			if (isCommandMenuOpen) return;
 
-			const cursorPosition = getCursorPosition(e.currentTarget);
-			if (cursorPosition < e.currentTarget.innerText.length) return;
+			const caretPosition = getCaretPosition(e.currentTarget);
+			if (caretPosition < e.currentTarget.innerText.length) return;
 
 			e.preventDefault();
 			const next = blockIndex + 1;
@@ -109,7 +109,7 @@ const TextEditor = () => {
 			if (!nextElement) return;
 
 			setActiveBlock(next);
-			setCursorPosition(nextElement, 0);
+			setCaretPosition(nextElement, 0);
 		},
 
 		"/": (_, blockIndex) => {

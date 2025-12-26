@@ -17,9 +17,7 @@ const SeparatorBlock = ({ block, index, setRef, keyDownOnBlock }: SeparatorBlock
 		if (activeBlockIndex === index) {
 			// Use setTimeout to ensure ref is set after render
 			const timeoutId = setTimeout(() => {
-				if (divRef.current) {
-					divRef.current.focus();
-				}
+				if (divRef.current) divRef.current.focus();
 			}, 0);
 			return () => clearTimeout(timeoutId);
 		}

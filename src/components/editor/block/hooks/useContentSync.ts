@@ -1,7 +1,7 @@
 import { useEffect, type RefObject } from "react";
 import {
-	getCursorPosition,
-	setCursorPosition,
+	getCaretPosition,
+	setCaretPosition,
 } from "../../../../lib/selectionFunctions/getAndSetSelection";
 import type { ParagraphBlock, HeaderBlock, CodeBlock } from "../../../../types/editor/block.types";
 
@@ -15,15 +15,15 @@ export const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLEleme
 		if (currentContent !== block.content) {
 			const selection = window.getSelection();
 			const element = elementRef.current as HTMLDivElement;
-			const cursorPos =
+			const caretPos =
 				selection && element.contains(selection.focusNode)
-					? getCursorPosition(element)
+					? getCaretPosition(element)
 					: null;
 
 			elementRef.current.innerHTML = block.content;
 
-			if (cursorPos !== null && elementRef.current) {
-				setCursorPosition(element, cursorPos);
+			if (caretPos !== null && elementRef.current) {
+				setCaretPosition(element, caretPos);
 			}
 		}
 	}, [block.content, elementRef]);

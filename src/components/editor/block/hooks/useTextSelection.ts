@@ -2,7 +2,7 @@ import { useToolbarStore } from "../../../../stores/editorStores/toolbarStore";
 import { getSelectionDetails } from "../../../../lib/selectionFunctions/getSelectionDetails";
 import { isSelectedTextStyled } from "../../../../lib/selectionFunctions/isSelectedTextStyled";
 
-export const useTextSelection = () => {
+const useTextSelection = () => {
 	const { setSelectedText, showToolbar, hideToolbar, setToolbarPosition, setRange } =
 		useToolbarStore();
 
@@ -26,3 +26,5 @@ export const useTextSelection = () => {
 
 	return { handleTextSelection };
 };
+
+export default useTextSelection;

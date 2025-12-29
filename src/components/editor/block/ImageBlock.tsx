@@ -6,8 +6,10 @@ import {
 	type DragEvent,
 	type KeyboardEvent,
 } from "react";
+
 import type { ImageBlock } from "../../../types/editor/block.types";
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
+import useAutoFocus from "./hooks/useAutoFocus";
 
 type ImageBlockProps = {
 	block: ImageBlock;
@@ -23,17 +25,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 	const [isDragging, setIsDragging] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
-	useEffect(() => {
-		if (activeBlockIndex === index) {
-			// Use setTimeout to ensure ref is set after render
-			const timeoutId = setTimeout(() => {
-				if (divRef.current) {
-					divRef.current.focus();
-				}
-			}, 0);
-			return () => clearTimeout(timeoutId);
-		}
-	}, [activeBlockIndex, index]);
+	useAutoFocus(divRef, activeBlockIndex === index);
 
 	const handleFile = (file: File) => {
 		if (!file.type.startsWith("image/")) {

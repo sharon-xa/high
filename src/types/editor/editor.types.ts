@@ -1,4 +1,4 @@
-import type { Block, BlockType } from "./block.types";
+import type { Block, BlockType, HeaderLevels } from "./block.types";
 
 export type EditorState = {
 	title: string;
@@ -13,6 +13,7 @@ export type EditorAction = {
 	// Blocks
 	addBlock(block: Block, afterIndex: number | null): void;
 	updateBlock(index: number, block: Block): void;
+	updateBlockType(index: number, type: BlockType, headerLevel?: HeaderLevels): void;
 	updateBlockContent(index: number, content: string): void;
 	deleteBlock(index: number): void;
 	reorderBlocks(sourceIndex: number, destinationIndex: number): void;

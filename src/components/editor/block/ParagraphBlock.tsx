@@ -2,9 +2,11 @@ import { useRef, useEffect, type FormEvent, type KeyboardEvent } from "react";
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../../stores/editorStores/toolbarStore";
 import { IS_MOBILE } from "../../../lib/platform";
-import { useTextSelection } from "./hooks/useTextSelection";
-import { useContentSync } from "./hooks/useContentSync";
+import useTextSelection from "./hooks/useTextSelection";
+import useContentSync from "./hooks/useContentSync";
 import type { ParagraphBlock as ParagraphBlockType } from "../../../types/editor/block.types";
+import { handleUserInput } from "./handleUserInput";
+import useAutoFocus from "./hooks/useAutoFocus";
 
 type ParagraphBlockProps = {
 	block: ParagraphBlockType;
@@ -17,19 +19,10 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 	const { activeBlockIndex, updateBlockContent, setActiveBlock } = useEditorStore();
 	const { hideToolbar } = useToolbarStore();
 	const { handleTextSelection } = useTextSelection();
-	const divRef = useRef<HTMLDivElement>(null);
+	const divRef = useRef<HTMLElement>(null);
 
 	useContentSync(block, divRef);
-
-	useEffect(() => {
-		if (activeBlockIndex === index) {
-			// Use setTimeout to ensure ref is set after render
-			const timeoutId = setTimeout(() => {
-				if (divRef.current) divRef.current.focus();
-			}, 0);
-			return () => clearTimeout(timeoutId);
-		}
-	}, [activeBlockIndex, index]);
+	useAutoFocus(divRef, activeBlockIndex === index);
 
 	return (
 		<div
@@ -40,17 +33,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 			contentEditable
 			suppressContentEditableWarning
 			onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
-			onInput={(e: FormEvent<HTMLDivElement>) => {
-				let content = e.currentTarget.innerHTML;
-
-				// bruh, the browser adds a newline char or <br> tag by default when the contentEditable property is set to true
-				content = content
-					.replace(/^<br>$/, "") // remove standalone br
-					.replace(/^<div><br><\/div>$/, "") // remove empty div with br
-					.trim();
-
-				updateBlockContent(index, content);
-			}}
+			onInput={(e: FormEvent<HTMLElement>) => handleUserInput(e, index, updateBlockContent)}
 			onSelect={handleTextSelection}
 			onKeyUp={(e) => {
 				if (["Shift"].includes(e.key)) handleTextSelection();

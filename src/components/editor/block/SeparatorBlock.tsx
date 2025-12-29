@@ -1,6 +1,7 @@
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
 import type { SeparatorBlock as SeparatorBlockType } from "../../../types/editor/block.types";
+import useAutoFocus from "./hooks/useAutoFocus";
 
 type SeparatorBlockProps = {
 	block: SeparatorBlockType;
@@ -9,19 +10,11 @@ type SeparatorBlockProps = {
 	keyDownOnBlock: (e: React.KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
 };
 
-const SeparatorBlock = ({ block, index, setRef, keyDownOnBlock }: SeparatorBlockProps) => {
+const SeparatorBlock = ({ index, setRef, keyDownOnBlock }: SeparatorBlockProps) => {
 	const { activeBlockIndex, setActiveBlock } = useEditorStore();
 	const divRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		if (activeBlockIndex === index) {
-			// Use setTimeout to ensure ref is set after render
-			const timeoutId = setTimeout(() => {
-				if (divRef.current) divRef.current.focus();
-			}, 0);
-			return () => clearTimeout(timeoutId);
-		}
-	}, [activeBlockIndex, index]);
+	useAutoFocus(divRef, activeBlockIndex === index);
 
 	return (
 		<div

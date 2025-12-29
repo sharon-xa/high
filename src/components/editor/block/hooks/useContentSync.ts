@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from "react";
+import { useLayoutEffect, type RefObject } from "react";
 import {
 	getCaretPosition,
 	setCaretPosition,
@@ -7,11 +7,11 @@ import type { ParagraphBlock, HeaderBlock, CodeBlock } from "../../../../types/e
 
 type TextBlock = ParagraphBlock | HeaderBlock | CodeBlock;
 
-export const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLElement | null>) => {
-	useEffect(() => {
+const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLElement | null>) => {
+	useLayoutEffect(() => {
 		if (!elementRef.current) return;
-
 		const currentContent = elementRef.current.innerHTML;
+
 		if (currentContent !== block.content) {
 			const selection = window.getSelection();
 			const element = elementRef.current as HTMLDivElement;
@@ -23,8 +23,13 @@ export const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLEleme
 			elementRef.current.innerHTML = block.content;
 
 			if (caretPos !== null && elementRef.current) {
-				setCaretPosition(element, caretPos);
+				const maxPos = elementRef.current.textContent?.length || 0;
+				const safePos = Math.min(caretPos, maxPos);
+
+				setCaretPosition(element, safePos);
 			}
 		}
 	}, [block.content, elementRef]);
 };
+
+export default useContentSync;

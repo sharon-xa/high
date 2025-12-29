@@ -36,6 +36,14 @@ export const useEditorStore = create<EditorStore>()(
 			});
 		},
 
+		updateBlockType(index, type, headerLevel?) {
+			set((state) => {
+				if (state.blocks[index].type === type) return;
+				const newBlock = state.createBlock(type, headerLevel);
+				state.blocks[index] = newBlock;
+			});
+		},
+
 		updateBlockContent(index: number, content: string) {
 			set((state) => {
 				if (index < 0 || index >= state.blocks.length) return;

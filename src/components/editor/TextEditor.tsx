@@ -18,7 +18,7 @@ import MobileToolBar from "./blockActions/MobileToolbar";
 import type React from "react";
 
 const TextEditor = () => {
-	const divRefs = useRef<(HTMLDivElement | null)[]>([]);
+	const divRefs = useRef<(HTMLElement | null)[]>([]);
 
 	const {
 		// title
@@ -29,6 +29,7 @@ const TextEditor = () => {
 		blocks,
 		addBlock,
 		deleteBlock,
+		updateBlockType,
 
 		// activity
 		activeBlockIndex,
@@ -43,12 +44,11 @@ const TextEditor = () => {
 			activeBlockIndex !== null &&
 			activeBlockIndex !== -1 &&
 			divRefs.current[activeBlockIndex]
-		) {
+		)
 			divRefs.current[activeBlockIndex]?.focus();
-		}
 	}, [activeBlockIndex]);
 
-	type BlockKeyHandler = (e: React.KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
+	type BlockKeyHandler = (e: React.KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 
 	const blockKeyHandlers: Record<string, BlockKeyHandler> = {
 		Enter(e, blockIndex) {
@@ -119,9 +119,14 @@ const TextEditor = () => {
 				if (block.content === "/") setIsCommandMenuOpen(false);
 			}
 		},
+		"`": (_, blockIndex) => {
+			const block = blocks[blockIndex];
+			if (block.type === "paragraph" && block.content === "``")
+				updateBlockType(blockIndex, "code");
+		},
 	};
 
-	const keyDownOnBlock = (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) =>
+	const keyDownOnBlock = (e: KeyboardEvent<HTMLElement>, blockIndex: number) =>
 		blockKeyHandlers[e.key]?.(e, blockIndex);
 
 	return (

@@ -1,10 +1,15 @@
 import { useRef, useEffect, type FormEvent, type KeyboardEvent, type CSSProperties } from "react";
+
+import useTextSelection from "./hooks/useTextSelection";
+import useContentSync from "./hooks/useContentSync";
+
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../../stores/editorStores/toolbarStore";
 import { IS_MOBILE } from "../../../lib/platform";
-import { useTextSelection } from "./hooks/useTextSelection";
-import { useContentSync } from "./hooks/useContentSync";
+import { handleUserInput } from "./handleUserInput";
+
 import type { HeaderBlock as HeaderBlockType } from "../../../types/editor/block.types";
+import useAutoFocus from "./hooks/useAutoFocus";
 
 type HeaderBlockProps = {
 	block: HeaderBlockType;
@@ -17,42 +22,23 @@ const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps)
 	const { activeBlockIndex, updateBlockContent, setActiveBlock } = useEditorStore();
 	const { hideToolbar } = useToolbarStore();
 	const { handleTextSelection } = useTextSelection();
-	const divRef = useRef<HTMLHeadingElement>(null);
+	const headerRef = useRef<HTMLHeadingElement>(null);
 	const level = block.level;
 
-	useContentSync(block, divRef);
-
-	useEffect(() => {
-		if (activeBlockIndex === index) {
-			// Use setTimeout to ensure ref is set after render
-			const timeoutId = setTimeout(() => {
-				if (divRef.current) {
-					divRef.current.focus();
-				}
-			}, 0);
-			return () => clearTimeout(timeoutId);
-		}
-	}, [activeBlockIndex, index]);
+	useContentSync(block, headerRef);
+	useAutoFocus(headerRef, activeBlockIndex === index);
 
 	const headerProps = {
 		ref: (el: HTMLHeadingElement | null) => {
-			divRef.current = el;
+			headerRef.current = el;
 			setRef(el as unknown as HTMLDivElement);
 		},
 		contentEditable: true,
 		suppressContentEditableWarning: true,
 		onKeyDown: (e: KeyboardEvent<HTMLHeadingElement>) =>
 			keyDownOnBlock(e as unknown as KeyboardEvent<HTMLDivElement>, index),
-		onInput: (e: FormEvent<HTMLHeadingElement>) => {
-			let content = e.currentTarget.innerHTML;
-
-			content = content
-				.replace(/^<br>$/, "")
-				.replace(/^<div><br><\/div>$/, "")
-				.trim();
-
-			updateBlockContent(index, content);
-		},
+		onInput: (e: FormEvent<HTMLHeadingElement>) =>
+			handleUserInput(e, index, updateBlockContent),
 		onSelect: handleTextSelection,
 		onKeyUp: (e: KeyboardEvent<HTMLHeadingElement>) => {
 			if (["Shift"].includes(e.key)) handleTextSelection();

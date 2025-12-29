@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router";
 import { Mail, Lock, User, Calendar, Users } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import type { Gender } from "../types/user.types";
 import Input from "../components/formStuff/Input";
 import Select from "../components/formStuff/Select";
 import { useLogin, useRegister, useResendOtp, useVerifyOtp } from "../hooks/useAuth";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	loginSchema,
 	otpSchema,
@@ -24,7 +25,7 @@ interface LocationState {
 	};
 }
 
-const Auth: React.FC = () => {
+const Auth = () => {
 	const [activeTab, setActiveTab] = useState<TabType>("login");
 	const [showOtpVerification, setShowOtpVerification] = useState(false);
 	const [userEmail, setUserEmail] = useState("");
@@ -71,7 +72,6 @@ const Auth: React.FC = () => {
 	};
 
 	const handleSignupSubmit = (data: SignupFormData) => {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { confirmPassword, ...registerData } = data;
 
 		registerMutation.mutate(registerData, {
@@ -112,7 +112,6 @@ const Auth: React.FC = () => {
 		registerMutation.reset();
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const getErrorMessage = (error: any) => {
 		return error?.response?.data?.message || error?.message || "An error occurred";
 	};

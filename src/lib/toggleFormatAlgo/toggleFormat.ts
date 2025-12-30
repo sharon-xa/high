@@ -1,11 +1,7 @@
 import type { TextStylesCommand } from "../../types/editor/toolbar.types";
 import { findCommonFormattingAncestor, hasAncestorWithTag } from "./ancestors";
 import { restoreSelection, saveSelection } from "./selectionStateSaveAndRestore";
-import {
-	flattenNestedTags,
-	mergeAdjacentTags,
-	removeEmptyFormatting,
-} from "./toggleFormatCleanUpFunctions";
+import { flattenNestedTags, mergeAdjacentTags, removeEmptyFormatting } from "./cleanUpFunctions";
 import { unwrapElement, wrapPartial } from "./wrappers";
 
 export function toggleFormat(range: Range, command: TextStylesCommand, href?: string): void {
@@ -40,7 +36,10 @@ export function toggleFormat(range: Range, command: TextStylesCommand, href?: st
 			? range.commonAncestorContainer
 			: range.commonAncestorContainer.parentElement!;
 
+	// TODO: fix this
+	// Bug: when selecting styled text to remove the styles this function give false while it should produce true.
 	const shouldUnwrap = textNodes.every(({ node }) => hasAncestorWithTag(node, tag, href));
+	console.log("should unwrap:", shouldUnwrap);
 
 	if (shouldUnwrap) {
 		const ancestor = findCommonFormattingAncestor(
@@ -49,9 +48,7 @@ export function toggleFormat(range: Range, command: TextStylesCommand, href?: st
 			href
 		);
 
-		if (ancestor) {
-			unwrapElement(ancestor);
-		}
+		if (ancestor) unwrapElement(ancestor);
 	} else {
 		textNodes.forEach(({ node, start, end }) => {
 			wrapPartial(node, start, end, tag, href);

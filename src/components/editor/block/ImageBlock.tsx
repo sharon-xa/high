@@ -1,7 +1,6 @@
 import {
 	useRef,
 	useState,
-	useEffect,
 	type ChangeEvent,
 	type DragEvent,
 	type KeyboardEvent,
@@ -154,9 +153,8 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 				<div
 					onClick={handleClick}
 					style={{
-						border: `2px dashed ${
-							isDragging ? "var(--color-primary)" : "var(--color-border)"
-						}`,
+						border: `2px dashed ${isDragging ? "var(--color-primary)" : "var(--color-border)"
+							}`,
 						borderRadius: "4px",
 						padding: "32px 24px",
 						textAlign: "center",

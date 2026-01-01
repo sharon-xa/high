@@ -1,4 +1,4 @@
-import { useRef, useEffect, type FormEvent, type KeyboardEvent, type CSSProperties } from "react";
+import { useRef, type FormEvent, type KeyboardEvent, type CSSProperties } from "react";
 
 import useTextSelection from "./hooks/useTextSelection";
 import useContentSync from "./hooks/useContentSync";

@@ -1,4 +1,4 @@
-import { useRef, useEffect, type FormEvent, type KeyboardEvent } from "react";
+import { useRef, type FormEvent, type KeyboardEvent } from "react";
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../../stores/editorStores/toolbarStore";
 import { IS_MOBILE } from "../../../lib/platform";

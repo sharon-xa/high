@@ -10,14 +10,12 @@ export const handleUserInput = (
 	content = content.replace(/^<br>$/, "").replace(/^<div><br><\/div>$/, "");
 
 	let prevContent;
-	let hadEmptyTags = false;
 	do {
 		prevContent = content;
 		content = content.replace(/<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*><\/\1>/gi, "");
-		if (content !== prevContent) hadEmptyTags = true;
 	} while (content !== prevContent);
 
-	// Convert trailing spaces to &nbsp; for Firefox
+	// convert trailing spaces to &nbsp; for Firefox
 	content = content.replace(/ (?=<)/g, "&nbsp;");
 	content = content.replace(/ $/g, "&nbsp;");
 

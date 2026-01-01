@@ -133,11 +133,7 @@ function checkIfShouldUnwrap(
 	root: Node
 ): boolean {
 	// 1: check if all text nodes have the ancestor
-	const ancestorResults = textNodes.map(({ node }) => {
-		const hasAncestor = hasAncestorWithTag(node, tag, href);
-		console.log(`  - "${node.textContent}": ${hasAncestor}`);
-		return hasAncestor;
-	});
+	const ancestorResults = textNodes.map(({ node }) => hasAncestorWithTag(node, tag, href));
 
 	const allHaveAncestor = ancestorResults.every(result => result);
 	if (allHaveAncestor) return true;

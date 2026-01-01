@@ -31,15 +31,10 @@ export function toggleFormat(range: Range, command: TextStylesCommand, href?: st
 	const textNodes = getSelectedTextNodes(range);
 	if (textNodes.length === 0) return;
 
-	const root =
-		range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-			? range.commonAncestorContainer
-			: range.commonAncestorContainer.parentElement!;
+	let root: Node = range.commonAncestorContainer;
+	while (root.nodeType !== Node.ELEMENT_NODE && root.parentElement) root = root.parentElement;
 
-	// TODO: fix this
-	// Bug: when selecting styled text to remove the styles this function give false while it should produce true.
-	const shouldUnwrap = textNodes.every(({ node }) => hasAncestorWithTag(node, tag, href));
-	console.log("should unwrap:", shouldUnwrap);
+	const shouldUnwrap = checkIfShouldUnwrap(range, textNodes, tag, href, root);
 
 	if (shouldUnwrap) {
 		const ancestor = findCommonFormattingAncestor(
@@ -86,25 +81,79 @@ function getSelectedTextNodes(range: Range): Array<{ node: Text; start: number; 
 		];
 	}
 
-	const root =
-		range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-			? range.commonAncestorContainer
-			: range.commonAncestorContainer.parentElement!;
+	let root: Node = range.commonAncestorContainer;
+	while (root.nodeType !== Node.ELEMENT_NODE && root.parentElement) root = root.parentElement;
 
 	const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 	let current = walker.nextNode() as Text | null;
 
 	while (current) {
-		if (range.intersectsNode(current)) {
-			const start = current === range.startContainer ? range.startOffset : 0;
+		if (current.textContent !== "") {
+			const isStartNode = current === range.startContainer;
+			const isEndNode = current === range.endContainer;
+			const isBetween =
+				range.comparePoint(current, 0) >= 0 &&
+				range.comparePoint(current, current.length) <= 0;
 
-			const end = current === range.endContainer ? range.endOffset : current.length;
+			if (isStartNode || isEndNode || isBetween) {
+				const start = isStartNode ? range.startOffset : 0;
+				const end = isEndNode ? range.endOffset : current.length;
 
-			nodes.push({ node: current, start, end });
+				if (start < end) {
+					nodes.push({ node: current, start, end });
+				}
+			}
 		}
 
 		current = walker.nextNode() as Text | null;
 	}
 
 	return nodes;
+}
+
+function checkIfShouldUnwrap(
+	range: Range,
+	textNodes: Array<{ node: Text; start: number; end: number }>,
+	tag: string,
+	href: string | undefined,
+	root: Node
+): boolean {
+	// 1: check if all text nodes have the ancestor
+	const allHaveAncestor = textNodes.every(({ node }) => hasAncestorWithTag(node, tag, href));
+	if (allHaveAncestor) return true;
+
+	// 2: check if the common ancestor itself is the formatting tag
+	let commonAncestor = range.commonAncestorContainer;
+	if (commonAncestor.nodeType === Node.TEXT_NODE) commonAncestor = commonAncestor.parentElement!;
+
+	let current = commonAncestor as HTMLElement | null;
+	while (current && current !== root) {
+		if (current.tagName === tag) {
+			if (tag !== "A" || current.getAttribute("href") === href) {
+				return true;
+			}
+		}
+		current = current.parentElement;
+	}
+
+	// 3: check if there's a single formatting element containing the entire selection
+	const formattingElements = new Set<HTMLElement>();
+	textNodes.forEach(({ node }) => {
+		let parent = node.parentElement;
+		while (parent && parent !== root) {
+			if (parent.tagName === tag) {
+				if (tag !== "A" || parent.getAttribute("href") === href) {
+					formattingElements.add(parent);
+				}
+			}
+			parent = parent.parentElement;
+		}
+	});
+
+	if (formattingElements.size === 1) {
+		const [element] = formattingElements;
+		return textNodes.every(({ node }) => element.contains(node));
+	}
+
+	return false;
 }

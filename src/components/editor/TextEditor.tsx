@@ -136,6 +136,7 @@ const TextEditor = () => {
 					className="text-editor-input resize-none overflow-hidden h-auto text-4xl font-bold"
 					value={title}
 					placeholder={title ? "" : "Title..."}
+					name="title"
 					rows={1}
 					onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 						if (e.key === "Enter") {

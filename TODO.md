@@ -22,7 +22,8 @@
 - [x] For some reason when clicking bold to make some text bold it automatically select the next character.
 - [ ] Test the toggleFormat function.
 - [x] Removing styled text will make the cursor go back to the beginning.
-- [ ] Selecting styled text then trying to destyle it won't work on first click, you need a second click for it to work.
+- [x] Selecting styled text then trying to destyle it won't work on first click, you need a second click for it to work.
+- [ ] User cannot press arrow down or up to navigate blocks when the focus is on the image block.
 
 # Features
 

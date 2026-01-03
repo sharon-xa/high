@@ -51,15 +51,15 @@ const TextEditor = () => {
 	// Make sure that the element is caret dependent and if it shouldn't be moved yet.
 	const isCaretDependent = (blockIndex: number) => {
 		return blocks[blockIndex].type === "paragraph" || blocks[blockIndex].type === "header";
-	}
+	};
 
 	const isCaretAfterStart = (e: KeyboardEvent<HTMLElement>) => {
 		return getCaretPosition(e.currentTarget) > 0;
-	}
+	};
 
 	const isCaretBeforeEnd = (e: KeyboardEvent<HTMLElement>) => {
 		return getCaretPosition(e.currentTarget) < e.currentTarget.innerText.length;
-	}
+	};
 
 	type BlockKeyHandler = (e: React.KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 
@@ -91,8 +91,7 @@ const TextEditor = () => {
 			}
 
 			if (block.type === "image" || block.type === "separator") {
-				if (divRefs.current[blockIndex] === document.activeElement)
-					deleteBlock(blockIndex);
+				if (divRefs.current[blockIndex] === document.activeElement) deleteBlock(blockIndex);
 				return;
 			}
 		},

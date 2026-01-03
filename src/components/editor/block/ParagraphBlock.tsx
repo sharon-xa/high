@@ -32,6 +32,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 			}}
 			contentEditable
 			suppressContentEditableWarning
+			data-placeholder="Press / for the command menu"
 			onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
 			onInput={(e: FormEvent<HTMLElement>) => handleUserInput(e, index, updateBlockContent)}
 			onSelect={handleTextSelection}

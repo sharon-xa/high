@@ -91,6 +91,12 @@ input[type="date"]::-moz-calendar-picker-indicator {
 	width: 100%;
 }
 
+.text-editor-input:focus:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-white-50);
+  pointer-events: none;
+}
+
 .text-editor-input > a {
 	text-decoration: underline;
 	cursor: pointer;
@@ -98,6 +104,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
 	font-weight: 600;
 }
 
+/* TODO: Are you still using text-editor-input for image blocks? */
 .text-editor-input > img {
 	max-width: 100%;
 	height: auto;

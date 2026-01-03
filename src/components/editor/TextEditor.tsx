@@ -131,10 +131,18 @@ const TextEditor = () => {
 				if (block.content === "/") setIsCommandMenuOpen(false);
 			}
 		},
+
 		"`": (_, blockIndex) => {
 			const block = blocks[blockIndex];
 			if (block.type === "paragraph" && block.content === "``")
 				updateBlockType(blockIndex, "code");
+		},
+
+		" ": (_, blockIndex) => {
+			const block = blocks[blockIndex];
+			if (block.type === "image" && divRefs.current[blockIndex] === document.activeElement) {
+				console.log(document.activeElement);
+			}
 		},
 	};
 

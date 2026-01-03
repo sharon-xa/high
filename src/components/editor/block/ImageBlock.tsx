@@ -1,14 +1,9 @@
-import {
-	useRef,
-	useState,
-	type ChangeEvent,
-	type DragEvent,
-	type KeyboardEvent,
-} from "react";
+import { useRef, useState, type ChangeEvent, type DragEvent, type KeyboardEvent } from "react";
 
 import type { ImageBlock } from "../../../types/editor/block.types";
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
 import useAutoFocus from "./hooks/useAutoFocus";
+import LoadingSpinner from "../../ui/LoadingSpinner";
 
 type ImageBlockProps = {
 	block: ImageBlock;
@@ -19,12 +14,13 @@ type ImageBlockProps = {
 
 const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBlockProps) => {
 	const { activeBlockIndex, updateBlock, setActiveBlock } = useEditorStore();
+	const [isActive, setIsActive] = useState<boolean>(activeBlockIndex === index);
+	const [isDragging, setIsDragging] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const divRef = useRef<HTMLDivElement>(null);
-	const [isDragging, setIsDragging] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 
-	useAutoFocus(divRef, activeBlockIndex === index);
+	useAutoFocus(divRef, activeBlockIndex === index, setIsActive);
 
 	const handleFile = (file: File) => {
 		if (!file.type.startsWith("image/")) {
@@ -33,6 +29,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 		}
 
 		setIsLoading(true);
+
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			const dataUrl = e.target?.result as string;
@@ -52,13 +49,8 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 
 	const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
-		if (file) {
-			handleFile(file);
-		}
-		// Reset input so the same file can be selected again
-		if (fileInputRef.current) {
-			fileInputRef.current.value = "";
-		}
+		if (file) handleFile(file);
+		if (fileInputRef.current) fileInputRef.current.value = ""; // Reset input so the same file can be selected again
 	};
 
 	const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -79,9 +71,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 		setIsDragging(false);
 
 		const file = e.dataTransfer.files?.[0];
-		if (file) {
-			handleFile(file);
-		}
+		if (file) handleFile(file);
 	};
 
 	const handleClick = () => {
@@ -97,13 +87,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 			onFocus={() => setActiveBlock(index)}
 			onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
 			tabIndex={0}
-			className="text-editor-input"
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				gap: "8px",
-				padding: "8px 0",
-			}}
+			className={`w-full p-2 flex flex-col gap-2 border-none ${isActive ? "outline-2 outline-primary" : ""} rounded`}
 			onDragOver={handleDragOver}
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}
@@ -152,20 +136,13 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 			) : (
 				<div
 					onClick={handleClick}
+					className={`text-white-50 px-8 py-6 text-center cursor-pointer rounded border-2 border-dashed ${isDragging ? "border-primary bg-primary-25" : "border-border bg-transparent"}`}
 					style={{
-						border: `2px dashed ${isDragging ? "var(--color-primary)" : "var(--color-border)"
-							}`,
-						borderRadius: "4px",
-						padding: "32px 24px",
-						textAlign: "center",
-						color: "var(--color-white-50)",
-						cursor: "pointer",
-						backgroundColor: isDragging ? "var(--color-primary-25)" : "transparent",
 						transition: "all 0.2s ease",
 					}}
 				>
 					{isLoading ? (
-						<div>Loading image...</div>
+						<LoadingSpinner size="mid" />
 					) : (
 						<>
 							<div style={{ marginBottom: "8px", fontSize: "14px" }}>

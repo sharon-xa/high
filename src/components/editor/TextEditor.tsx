@@ -48,6 +48,19 @@ const TextEditor = () => {
 			divRefs.current[activeBlockIndex]?.focus();
 	}, [activeBlockIndex]);
 
+	// Make sure that the element is caret dependent and if it shouldn't be moved yet.
+	const isCaretDependent = (blockIndex: number) => {
+		return blocks[blockIndex].type === "paragraph" || blocks[blockIndex].type === "header";
+	}
+
+	const isCaretAfterStart = (e: KeyboardEvent<HTMLElement>) => {
+		return getCaretPosition(e.currentTarget) > 0;
+	}
+
+	const isCaretBeforeEnd = (e: KeyboardEvent<HTMLElement>) => {
+		return getCaretPosition(e.currentTarget) < e.currentTarget.innerText.length;
+	}
+
 	type BlockKeyHandler = (e: React.KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 
 	const blockKeyHandlers: Record<string, BlockKeyHandler> = {
@@ -78,7 +91,8 @@ const TextEditor = () => {
 			}
 
 			if (block.type === "image" || block.type === "separator") {
-				deleteBlock(blockIndex);
+				if (divRefs.current[blockIndex] === document.activeElement)
+					deleteBlock(blockIndex);
 				return;
 			}
 		},
@@ -86,8 +100,7 @@ const TextEditor = () => {
 		ArrowUp(e, blockIndex) {
 			if (isCommandMenuOpen) return;
 
-			const caretPosition = getCaretPosition(e.currentTarget);
-			if (caretPosition > 0) return;
+			if (isCaretDependent(blockIndex) && isCaretAfterStart(e)) return;
 
 			e.preventDefault();
 			const prev = blockIndex - 1;
@@ -98,8 +111,7 @@ const TextEditor = () => {
 		ArrowDown(e, blockIndex) {
 			if (isCommandMenuOpen) return;
 
-			const caretPosition = getCaretPosition(e.currentTarget);
-			if (caretPosition < e.currentTarget.innerText.length) return;
+			if (isCaretDependent(blockIndex) && isCaretBeforeEnd(e)) return;
 
 			e.preventDefault();
 			const next = blockIndex + 1;

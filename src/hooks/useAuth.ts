@@ -19,6 +19,10 @@ export const useLogin = () => {
 			setAuth(data.user, data.token);
 			queryClient.invalidateQueries({ queryKey: authKeys.all });
 		},
+		onError: (error) => {
+			console.error("Login error:", error);
+		},
+		throwOnError: false,
 	});
 };
 

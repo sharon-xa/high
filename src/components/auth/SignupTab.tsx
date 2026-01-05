@@ -9,6 +9,7 @@ import type { Gender } from "../../types/auth/user.types";
 
 import Input from "../ui/Input";
 import Select from "../ui/Select";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 const SignupTab = () => {
 	const { setRegisterMutation, setUserEmail, setShowOtpVerification } = useAuthPageStore();
@@ -16,13 +17,14 @@ const SignupTab = () => {
 	const registerMutation = useRegister();
 
 	const handleSignupSubmit = (data: RegisterFormData) => {
-		const { confirmPassword, ...registerData } = data;
-
-		registerMutation.mutate(registerData, {
+		registerMutation.mutate(data, {
 			onSuccess: (res) => {
 				console.log(res);
 				setUserEmail(data.email);
 				setShowOtpVerification(true);
+			},
+			onError: (res) => {
+				console.log(res);
 			},
 		});
 	};
@@ -167,14 +169,18 @@ const SignupTab = () => {
 			{/* Submit Button */}
 			<button
 				type="submit"
-				disabled={registerMutation.isPending || !registerForm.formState.isValid}
+				disabled={registerMutation.isPending}
 				className={`w-full p-3 border-none rounded-4xl bg-primary text-lg ${
 					registerMutation.isPending
 						? "cursor-not-allowed opacity-70"
 						: "cursor-pointer opacity-100"
 				}`}
 			>
-				{registerMutation.isPending ? "Signing up..." : "Sign Up"}
+				{registerMutation.isPending ? (
+					<LoadingSpinner customSize="h-6 border-2" />
+				) : (
+					"Sign Up"
+				)}
 			</button>
 		</form>
 	);

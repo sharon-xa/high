@@ -1,13 +1,14 @@
 import { api } from "./axiosConfig";
-import type { AuthResponse, LoginCredentials, RegisterData, User } from "../types/auth.types";
+import type { AuthResponse, User } from "../types/auth/auth.types";
+import type { LoginFormData, RegisterFormData } from "../schemas/authSchemas";
 
 export const authApi = {
-	login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
+	login: async (credentials: LoginFormData): Promise<AuthResponse> => {
 		const { data } = await api.post<AuthResponse>("/auth/login", credentials);
 		return data;
 	},
 
-	register: async (userData: RegisterData): Promise<AuthResponse> => {
+	register: async (userData: RegisterFormData): Promise<AuthResponse> => {
 		const { data } = await api.post<AuthResponse>("/auth/register", userData);
 		return data;
 	},

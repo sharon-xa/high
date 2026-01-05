@@ -25,11 +25,13 @@ const LoginTab = () => {
 	const loginMutation = useLogin();
 
 	const handleLoginSubmit = (data: LoginFormData) => {
-		console.log("Submit Login");
 		loginMutation!.mutate(data, {
 			onSuccess: (res) => {
 				console.log(res);
 				navigate(from, { replace: true });
+			},
+			onError: (res) => {
+				console.log(res);
 			},
 		});
 	};
@@ -39,7 +41,13 @@ const LoginTab = () => {
 	}, []);
 
 	return (
-		<form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="flex flex-col gap-12">
+		<form
+			onSubmit={(e) => {
+				e.preventDefault();
+				loginForm.handleSubmit(handleLoginSubmit)(e);
+			}}
+			className="flex flex-col gap-12"
+		>
 			<div className="flex flex-col gap-5">
 				{/* Email Input */}
 				<div>
@@ -89,7 +97,7 @@ const LoginTab = () => {
 			{/* Submit Button */}
 			<button
 				type="submit"
-				// disabled={loginMutation.isPending || !loginForm.formState.isValid}
+				disabled={loginMutation.isPending}
 				className={`w-full h-14 p-3 border-none rounded-4xl bg-primary text-lg ${
 					loginMutation.isPending
 						? "cursor-not-allowed opacity-70"

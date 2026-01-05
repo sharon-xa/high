@@ -10,7 +10,7 @@ type Props = {
 	highFives: number;
 	comments: number;
 };
-//
+
 const PostCard = ({ imgUrl, imgName, postUrl, title, date, highFives, comments }: Props) => {
 	return (
 		<a

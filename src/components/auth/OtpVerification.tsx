@@ -6,6 +6,7 @@ import { useAuthPageStore } from "../../stores/authStores/authPageStore";
 import { useNavigate } from "react-router";
 import { getErrorMessage } from "../../pages/Auth";
 import { useAuthForms } from "../../contexts/AuthFormsContext";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 const OtpVerification = () => {
 	const { userEmail, setShowOtpVerification, setActiveTab } = useAuthPageStore();
@@ -94,14 +95,18 @@ const OtpVerification = () => {
 
 					<button
 						type="submit"
-						disabled={verifyOtpMutation.isPending || !otpForm.formState.isValid}
+						disabled={verifyOtpMutation.isPending}
 						className={`w-full p-3 border-none rounded-4xl bg-primary text-lg ${
-							verifyOtpMutation.isPending || !otpForm.formState.isValid
+							verifyOtpMutation.isPending
 								? "cursor-not-allowed opacity-70"
 								: "cursor-pointer opacity-100"
 						}`}
 					>
-						{verifyOtpMutation.isPending ? "Verifying..." : "Verify OTP"}
+						{verifyOtpMutation.isPending ? (
+							<LoadingSpinner customSize="h-6 border-2" />
+						) : (
+							"Verify OTP"
+						)}
 					</button>
 
 					<div className="text-center">

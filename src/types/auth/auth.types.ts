@@ -21,20 +21,6 @@ export interface AuthActions {
 	updateUser: (userData: Partial<User>) => void;
 }
 
-export interface LoginCredentials {
-	email: string;
-	password: string;
-}
-
-export interface RegisterData {
-	firstName: string;
-	lastName: string;
-	email: string;
-	birthdate: string;
-	gender: Gender;
-	password: string;
-}
-
 export interface AuthResult {
 	success: boolean;
 	message?: string;

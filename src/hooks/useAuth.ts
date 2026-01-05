@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../stores/authStores/authStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "../api/auth";
 

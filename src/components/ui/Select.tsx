@@ -1,6 +1,6 @@
 import type { LucideProps } from "lucide-react";
 import { useRef, useState, type ForwardRefExoticComponent, type RefAttributes } from "react";
-import type { Gender } from "../../types/user.types";
+import type { Gender } from "../../types/auth/user.types";
 
 type Option = {
 	Title: string;

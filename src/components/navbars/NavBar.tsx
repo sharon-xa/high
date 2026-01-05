@@ -1,5 +1,5 @@
 import { House, LogIn, Settings, SquarePen, User } from "lucide-react";
-import { useAuthStore } from "../../stores/authStore";
+import { useAuthStore } from "../../stores/authStores/authStore";
 import NavItem from "./NavItem";
 
 const Navbar = () => {

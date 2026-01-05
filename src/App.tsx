@@ -11,6 +11,7 @@ import HomePage from "./pages/Home";
 import NewPost from "./pages/NewPost";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
+import { AuthFormsProvider } from "./contexts/AuthFormsContext";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -42,7 +43,9 @@ const router = createBrowserRouter([
 				path: "auth",
 				element: (
 					<PublicOnlyRoute>
-						<Auth />
+						<AuthFormsProvider>
+							<Auth />
+						</AuthFormsProvider>
 					</PublicOnlyRoute>
 				),
 			},

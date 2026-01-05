@@ -5,7 +5,7 @@ export const loginSchema = z.object({
 	password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export const signupSchema = z
+export const registerSchema = z
 	.object({
 		firstName: z.string().min(1, "First name is required").max(50, "First name is too long"),
 		lastName: z.string().min(1, "Last name is required").max(50, "Last name is too long"),
@@ -33,5 +33,5 @@ export const otpSchema = z.object({
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
-export type SignupFormData = z.infer<typeof signupSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
 export type OtpFormData = z.infer<typeof otpSchema>;

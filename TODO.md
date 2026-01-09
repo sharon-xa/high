@@ -28,7 +28,7 @@
 - [x] Selecting styled text then trying to destyle it won't work on first click, you need a second click for it to work.
 - [x] User cannot press arrow down or up to navigate blocks when the focus is on the image block.
 - [x] Review the styles in "index.css" specifically "text-editor-input" styles.
-- [ ] Writing " " emptyspace and then removing it will cause the placeholder to be gone.
+- [ ] Writing anything and then removing it will cause the placeholder to be gone from the paragrapgh block and header block.
 
 # Features
 

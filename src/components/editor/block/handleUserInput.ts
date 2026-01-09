@@ -20,7 +20,8 @@ export const handleUserInput = (
 	content = content.replace(/ $/g, "&nbsp;");
 
 	const textOnly = content.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
-	if (textOnly.trim() === "") content = "";
+	if (textOnly === "") content = "";
+	console.log(`'${content}'`);
 
 	blockContentUpdater(blockIndex, content);
 };

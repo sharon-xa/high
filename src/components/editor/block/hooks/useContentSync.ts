@@ -28,8 +28,10 @@ const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLElement | nu
 
 				setCaretPosition(element, safePos);
 			}
+		} else {
+			setCaretPosition(elementRef.current, currentContent.length);
 		}
-	}, [block.content, elementRef]);
+	}, [elementRef]);
 };
 
 export default useContentSync;

@@ -32,7 +32,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 			}}
 			contentEditable
 			suppressContentEditableWarning
-			data-placeholder="Press / for the command menu"
+			data-placeholder={IS_MOBILE === true ? "Text here..." : "Press / for the command menu"}
 			onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
 			onInput={(e: FormEvent<HTMLElement>) => handleUserInput(e, index, updateBlockContent)}
 			onSelect={handleTextSelection}
@@ -44,7 +44,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 			}}
 			onFocus={() => setActiveBlock(index)}
 			autoFocus={index === activeBlockIndex}
-			className="text-editor-input"
+			className="w-full border-none outline-none text-paragraph"
 		/>
 	);
 };

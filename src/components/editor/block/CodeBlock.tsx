@@ -10,7 +10,7 @@ import useAutoFocus from "./hooks/useAutoFocus";
 type CodeBlockProps = {
 	block: CodeBlockType;
 	index: number;
-	setRef: (el: HTMLDivElement | null) => void;
+	setRef: (el: HTMLElement | null) => void;
 	keyDownOnBlock: (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
 };
 
@@ -27,7 +27,7 @@ const CodeBlock = ({ block, index, setRef, keyDownOnBlock }: CodeBlockProps) => 
 		<pre
 			ref={(el) => {
 				preRef.current = el;
-				setRef(el as unknown as HTMLDivElement);
+				setRef(el as HTMLElement);
 			}}
 			contentEditable
 			suppressContentEditableWarning
@@ -35,7 +35,7 @@ const CodeBlock = ({ block, index, setRef, keyDownOnBlock }: CodeBlockProps) => 
 				keyDownOnBlock(e as unknown as KeyboardEvent<HTMLDivElement>, index)
 			}
 			onInput={(e: FormEvent<HTMLPreElement>) => {
-				let content = e.currentTarget.innerText; // Use innerText for code to preserve formatting
+				let content = e.currentTarget.innerText;
 
 				content = content.trim();
 
@@ -50,7 +50,7 @@ const CodeBlock = ({ block, index, setRef, keyDownOnBlock }: CodeBlockProps) => 
 			}}
 			onFocus={() => setActiveBlock(index)}
 			autoFocus={index === activeBlockIndex}
-			className="text-editor-input"
+			className="w-full border-none outline-none"
 			style={{
 				fontFamily: "var(--font-fira), monospace",
 				fontSize: "14px",

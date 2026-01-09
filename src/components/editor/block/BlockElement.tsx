@@ -9,7 +9,7 @@ import SeparatorBlock from "./SeparatorBlock";
 type Props = {
 	block: Block;
 	index: number;
-	setRef: (el: HTMLDivElement | null) => void;
+	setRef: (el: HTMLElement | null) => void;
 	keyDownOnBlock: (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
 };
 

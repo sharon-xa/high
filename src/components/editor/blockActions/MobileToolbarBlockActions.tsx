@@ -8,6 +8,7 @@ const MobileToolbarBlockActions = () => {
 		<>
 			{commands.map((command) => (
 				<ActionButton
+					key={command.id}
 					action={command.action}
 					buttonName={command.label}
 					className="p-2"

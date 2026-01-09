@@ -57,8 +57,16 @@ const TextEditor = () => {
 		return getCaretPosition(e.currentTarget) > 0;
 	};
 
+	const isCaretAtTheStart = (e: KeyboardEvent<HTMLElement>) => {
+		return getCaretPosition(e.currentTarget) === 0;
+	};
+
 	const isCaretBeforeEnd = (e: KeyboardEvent<HTMLElement>) => {
 		return getCaretPosition(e.currentTarget) < e.currentTarget.innerText.length;
+	};
+
+	const isCaretAtTheEnd = (e: KeyboardEvent<HTMLElement>) => {
+		return getCaretPosition(e.currentTarget) === e.currentTarget.innerText.length;
 	};
 
 	type BlockKeyHandler = (e: React.KeyboardEvent<HTMLElement>, blockIndex: number) => void;
@@ -66,6 +74,7 @@ const TextEditor = () => {
 	const blockKeyHandlers: Record<string, BlockKeyHandler> = {
 		Enter(e, blockIndex) {
 			if (isCommandMenuOpen) return;
+			if (blocks[blockIndex].type === "code") return;
 
 			e.preventDefault();
 			addBlock({ uuid: uuid(), type: "paragraph", content: "" }, blockIndex);
@@ -91,13 +100,26 @@ const TextEditor = () => {
 			}
 
 			if (block.type === "image" || block.type === "separator") {
-				if (divRefs.current[blockIndex] === document.activeElement) deleteBlock(blockIndex);
+				if (divRefs.current[blockIndex] === document.activeElement) {
+					e.preventDefault();
+					deleteBlock(blockIndex);
+					if (
+						blocks[blockIndex - 1] &&
+						(blocks[blockIndex - 1].type === "paragraph" ||
+							blocks[blockIndex - 1].type === "header")
+					) {
+						const prevElement = divRefs.current[blockIndex - 1];
+						setCaretAtEndOfText(prevElement);
+					}
+				}
 				return;
 			}
 		},
 
 		ArrowUp(e, blockIndex) {
 			if (isCommandMenuOpen) return;
+
+			if (blocks[blockIndex].type === "code" && !isCaretAtTheStart(e)) return;
 
 			if (isCaretDependent(blockIndex) && isCaretAfterStart(e)) return;
 
@@ -109,6 +131,8 @@ const TextEditor = () => {
 
 		ArrowDown(e, blockIndex) {
 			if (isCommandMenuOpen) return;
+
+			if (blocks[blockIndex].type === "code" && !isCaretAtTheEnd(e)) return;
 
 			if (isCaretDependent(blockIndex) && isCaretBeforeEnd(e)) return;
 
@@ -123,9 +147,20 @@ const TextEditor = () => {
 			setCaretPosition(nextElement, 0);
 		},
 
+		Tab(e, blockIndex) {
+			const block = blocks[blockIndex];
+			if (block.type === "code") {
+				e.preventDefault();
+				// add 4 spaces after caret and move the caret
+			}
+			console.log(e);
+			console.log(blockIndex);
+			return;
+		},
+
 		"/": (_, blockIndex) => {
 			const block = blocks[blockIndex];
-			if (block.type === "paragraph") {
+			if (block.type === "paragraph" || block.type === "header") {
 				if (block.content === "") setIsCommandMenuOpen(true);
 				if (block.content === "/") setIsCommandMenuOpen(false);
 			}
@@ -152,7 +187,7 @@ const TextEditor = () => {
 		<div className="min-h-96">
 			<div className="flex flex-col gap-6">
 				<textarea
-					className="text-editor-input resize-none overflow-hidden h-auto text-4xl font-bold"
+					className="w-full border-none outline-none resize-none overflow-hidden h-auto text-4xl font-bold"
 					value={title}
 					placeholder={title ? "" : "Title..."}
 					name="title"

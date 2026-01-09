@@ -34,6 +34,7 @@ const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps)
 			setRef(el as unknown as HTMLDivElement);
 		},
 		contentEditable: true,
+		"data-placeholder": `Header ${level}`,
 		suppressContentEditableWarning: true,
 		onKeyDown: (e: KeyboardEvent<HTMLHeadingElement>) =>
 			keyDownOnBlock(e as unknown as KeyboardEvent<HTMLDivElement>, index),
@@ -48,7 +49,7 @@ const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps)
 		},
 		onFocus: () => setActiveBlock(index),
 		autoFocus: index === activeBlockIndex,
-		className: "text-editor-input",
+		className: "w-full border-none outline-none text-header",
 		style: {
 			fontSize: level === 1 ? "2em" : level === 2 ? "1.5em" : "1.25em",
 			fontWeight: "bold",

@@ -16,19 +16,19 @@
     - [x] Make sure block buttons actually add blocks.
     - [ ] Navigation through blocks is bad on mobile.
 5. On desktop:
-    - [ ] Make sure that the toolbar is working as expected.
     - [x] Make sure adding different types of blocks with "/" is working as expected.
     - [x] Delete the "/" when changing the block type.
+    - [ ] Make sure that the toolbar is working as expected.
 
 # ISSUES
 
 - [x] For some reason when clicking bold to make some text bold it automatically select the next character.
-- [ ] Test the toggleFormat function.
 - [x] Removing styled text will make the cursor go back to the beginning.
 - [x] Selecting styled text then trying to destyle it won't work on first click, you need a second click for it to work.
 - [x] User cannot press arrow down or up to navigate blocks when the focus is on the image block.
 - [x] Review the styles in "index.css" specifically "text-editor-input" styles.
 - [x] Writing anything and then removing it will cause the placeholder to be gone from the paragrapgh block and header block.
+- [ ] Test the toggleFormat function.
 
 # Features
 
@@ -42,3 +42,4 @@
 # CodeBase Enhancments
 
 - [x] Auth.tsx in the pages folder is too big, refactor.
+- [ ] The action parameter on keyDownOnBlock function is too ambiguous, might delete later.

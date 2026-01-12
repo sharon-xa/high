@@ -9,7 +9,11 @@ type ImageBlockProps = {
 	block: ImageBlock;
 	index: number;
 	setRef: (el: HTMLElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
+	keyDownOnBlock: (
+		e: KeyboardEvent<HTMLElement>,
+		blockIndex: number,
+		action?: () => void
+	) => void;
 };
 
 const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBlockProps) => {
@@ -85,7 +89,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 				setRef(el);
 			}}
 			onFocus={() => setActiveBlock(index)}
-			onKeyDown={(e: KeyboardEvent<HTMLElement>) => keyDownOnBlock(e, index)}
+			onKeyDown={(e: KeyboardEvent<HTMLElement>) => keyDownOnBlock(e, index, handleClick)}
 			tabIndex={0}
 			className={`w-full p-2 flex flex-col gap-2 border-none ${isActive ? "outline-2 outline-primary" : ""} rounded`}
 			onDragOver={handleDragOver}

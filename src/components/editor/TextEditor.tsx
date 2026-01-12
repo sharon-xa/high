@@ -69,7 +69,11 @@ const TextEditor = () => {
 		return getCaretPosition(e.currentTarget) === e.currentTarget.innerText.length;
 	};
 
-	type BlockKeyHandler = (e: React.KeyboardEvent<HTMLElement>, blockIndex: number) => void;
+	type BlockKeyHandler = (
+		e: React.KeyboardEvent<HTMLElement>,
+		blockIndex: number,
+		action?: () => void
+	) => void;
 
 	const blockKeyHandlers: Record<string, BlockKeyHandler> = {
 		Enter(e, blockIndex) {
@@ -185,11 +189,13 @@ const TextEditor = () => {
 				updateBlockType(blockIndex, "code");
 		},
 
-		" ": (_, blockIndex) => {
+		" ": (e, blockIndex, action) => {
 			const block = blocks[blockIndex];
 			if (block.type === "image" && divRefs.current[blockIndex] === document.activeElement) {
-				// TODO: Check it later I don't remember right now
-				console.log(document.activeElement);
+				// TODO: simulate clicking the image placeholder to open the file picker
+
+				console.log(e.currentTarget);
+				action?.();
 			}
 		},
 	};
@@ -202,9 +208,13 @@ const TextEditor = () => {
 		},
 	};
 
-	const keyDownOnBlock = (e: KeyboardEvent<HTMLElement>, blockIndex: number) => {
+	const keyDownOnBlock = (
+		e: KeyboardEvent<HTMLElement>,
+		blockIndex: number,
+		action?: () => void
+	) => {
 		if (e.ctrlKey) ctrlShortcuts[e.key]?.(e, blockIndex);
-		blockKeyHandlers[e.key]?.(e, blockIndex);
+		else blockKeyHandlers[e.key]?.(e, blockIndex, action);
 	};
 
 	return (

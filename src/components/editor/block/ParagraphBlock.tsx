@@ -11,8 +11,8 @@ import useAutoFocus from "./hooks/useAutoFocus";
 type ParagraphBlockProps = {
 	block: ParagraphBlockType;
 	index: number;
-	setRef: (el: HTMLDivElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
+	setRef: (el: HTMLElement | null) => void;
+	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 };
 
 const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlockProps) => {
@@ -33,7 +33,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 			contentEditable
 			suppressContentEditableWarning
 			data-placeholder={IS_MOBILE === true ? "Text here..." : "Press / for the command menu"}
-			onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
+			onKeyDown={(e: KeyboardEvent<HTMLElement>) => keyDownOnBlock(e, index)}
 			onInput={(e: FormEvent<HTMLElement>) => handleUserInput(e, index, updateBlockContent)}
 			onSelect={handleTextSelection}
 			onKeyUp={(e) => {

@@ -13,11 +13,14 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import { AuthFormsProvider } from "./contexts/AuthFormsContext";
 
+const SECOND = 1000;
+const MINUTE = SECOND * 60;
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			staleTime: 1000 * 60 * 5,
-			gcTime: 1000 * 60 * 10,
+			staleTime: MINUTE * 5,
+			gcTime: MINUTE * 10,
 			retry: 1,
 			refetchOnWindowFocus: false,
 			refetchOnMount: true,

@@ -91,7 +91,7 @@ const TextEditor = () => {
 				return;
 			}
 
-			if (blockHaveContentField && block.content === "" && blockIndex !== 0) {
+			if (blockHaveContentField && block.content === "") {
 				e.preventDefault();
 				deleteBlock(blockIndex);
 				const prevElement = divRefs.current[blockIndex - 1];
@@ -149,12 +149,25 @@ const TextEditor = () => {
 
 		Tab(e, blockIndex) {
 			const block = blocks[blockIndex];
-			if (block.type === "code") {
-				e.preventDefault();
-				// add 4 spaces after caret and move the caret
-			}
-			console.log(e);
-			console.log(blockIndex);
+			if (block.type !== "code") return;
+
+			e.preventDefault();
+
+			const selection = window.getSelection();
+			if (!selection || selection.rangeCount <= 0) return;
+
+			const range = selection.getRangeAt(0);
+
+			const tabSpaces = document.createTextNode("\t");
+
+			range.deleteContents();
+			range.insertNode(tabSpaces);
+
+			range.setStartAfter(tabSpaces);
+			range.setEndAfter(tabSpaces);
+			selection.removeAllRanges();
+			selection.addRange(range);
+
 			return;
 		},
 
@@ -175,13 +188,24 @@ const TextEditor = () => {
 		" ": (_, blockIndex) => {
 			const block = blocks[blockIndex];
 			if (block.type === "image" && divRefs.current[blockIndex] === document.activeElement) {
+				// TODO: Check it later I don't remember right now
 				console.log(document.activeElement);
 			}
 		},
 	};
 
-	const keyDownOnBlock = (e: KeyboardEvent<HTMLElement>, blockIndex: number) =>
+	const ctrlShortcuts: Record<string, BlockKeyHandler> = {
+		Enter(_, blockIndex) {
+			const next = blockIndex + 1;
+			addBlock({ uuid: uuid(), type: "paragraph", content: "" }, blockIndex);
+			setActiveBlock(next);
+		},
+	};
+
+	const keyDownOnBlock = (e: KeyboardEvent<HTMLElement>, blockIndex: number) => {
+		if (e.ctrlKey) ctrlShortcuts[e.key]?.(e, blockIndex);
 		blockKeyHandlers[e.key]?.(e, blockIndex);
+	};
 
 	return (
 		<div className="min-h-96">

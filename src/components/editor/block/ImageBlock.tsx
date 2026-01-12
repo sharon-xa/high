@@ -8,8 +8,8 @@ import LoadingSpinner from "../../ui/LoadingSpinner";
 type ImageBlockProps = {
 	block: ImageBlock;
 	index: number;
-	setRef: (el: HTMLDivElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
+	setRef: (el: HTMLElement | null) => void;
+	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 };
 
 const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBlockProps) => {
@@ -18,7 +18,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 	const [isDragging, setIsDragging] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const divRef = useRef<HTMLDivElement>(null);
+	const divRef = useRef<HTMLElement>(null);
 
 	useAutoFocus(divRef, activeBlockIndex === index, setIsActive);
 
@@ -53,19 +53,19 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 		if (fileInputRef.current) fileInputRef.current.value = ""; // Reset input so the same file can be selected again
 	};
 
-	const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+	const handleDragOver = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
 		setIsDragging(true);
 	};
 
-	const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+	const handleDragLeave = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
 		setIsDragging(false);
 	};
 
-	const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+	const handleDrop = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
 		setIsDragging(false);
@@ -85,7 +85,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 				setRef(el);
 			}}
 			onFocus={() => setActiveBlock(index)}
-			onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
+			onKeyDown={(e: KeyboardEvent<HTMLElement>) => keyDownOnBlock(e, index)}
 			tabIndex={0}
 			className={`w-full p-2 flex flex-col gap-2 border-none ${isActive ? "outline-2 outline-primary" : ""} rounded`}
 			onDragOver={handleDragOver}
@@ -172,7 +172,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 						e.preventDefault();
 						// Move to next block or create new one
 					}
-					keyDownOnBlock(e as unknown as KeyboardEvent<HTMLDivElement>, index);
+					keyDownOnBlock(e as unknown as KeyboardEvent<HTMLElement>, index);
 				}}
 				style={{
 					backgroundColor: "transparent",
@@ -198,7 +198,7 @@ const ImageBlockComponent = ({ block, index, setRef, keyDownOnBlock }: ImageBloc
 					if (e.key === "Enter") {
 						e.preventDefault();
 					}
-					keyDownOnBlock(e as unknown as KeyboardEvent<HTMLDivElement>, index);
+					keyDownOnBlock(e as unknown as KeyboardEvent<HTMLElement>, index);
 				}}
 				style={{
 					backgroundColor: "transparent",

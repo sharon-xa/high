@@ -14,7 +14,7 @@ const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLElement | nu
 
 		if (currentContent !== block.content) {
 			const selection = window.getSelection();
-			const element = elementRef.current as HTMLDivElement;
+			const element = elementRef.current as HTMLElement;
 			const caretPos =
 				selection && element.contains(selection.focusNode)
 					? getCaretPosition(element)
@@ -31,7 +31,7 @@ const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLElement | nu
 		} else {
 			setCaretPosition(elementRef.current, currentContent.length);
 		}
-	}, [elementRef]);
+	}, [elementRef.current, block.content]);
 };
 
 export default useContentSync;

@@ -6,13 +6,13 @@ import useAutoFocus from "./hooks/useAutoFocus";
 type SeparatorBlockProps = {
 	block: SeparatorBlockType;
 	index: number;
-	setRef: (el: HTMLDivElement | null) => void;
-	keyDownOnBlock: (e: React.KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
+	setRef: (el: HTMLElement | null) => void;
+	keyDownOnBlock: (e: React.KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 };
 
 const SeparatorBlock = ({ index, setRef, keyDownOnBlock }: SeparatorBlockProps) => {
 	const { activeBlockIndex, setActiveBlock } = useEditorStore();
-	const divRef = useRef<HTMLDivElement>(null);
+	const divRef = useRef<HTMLElement>(null);
 	const [isActive, setIsActive] = useState<boolean>(activeBlockIndex === index);
 
 	useAutoFocus(divRef, activeBlockIndex === index, setIsActive);
@@ -24,7 +24,7 @@ const SeparatorBlock = ({ index, setRef, keyDownOnBlock }: SeparatorBlockProps) 
 				setRef(el);
 			}}
 			onFocus={() => setActiveBlock(index)}
-			onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => keyDownOnBlock(e, index)}
+			onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => keyDownOnBlock(e, index)}
 			tabIndex={0}
 			className={`w-full border-none p-2 ${isActive ? "outline-2 outline-primary" : ""} rounded`}
 		>

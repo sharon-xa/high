@@ -1,11 +1,7 @@
 import type { FormEvent } from "react";
 
-export const handleUserInput = (
-	e: FormEvent<HTMLElement>,
-	blockIndex: number,
-	blockContentUpdater: (index: number, content: string) => void
-) => {
-	let content = e.currentTarget.innerHTML;
+export const getSanitizedInnerHTML = (element: HTMLElement): string => {
+	let content = element.innerHTML;
 
 	content = content.replace(/^<br>$/, "").replace(/^<div><br><\/div>$/, "");
 
@@ -21,7 +17,16 @@ export const handleUserInput = (
 
 	const textOnly = content.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
 	if (textOnly === "") content = "";
-	console.log(`'${content}'`);
+
+	return content;
+};
+
+export const handleUserInput = (
+	e: FormEvent<HTMLElement>,
+	blockIndex: number,
+	blockContentUpdater: (index: number, content: string) => void
+) => {
+	let content = getSanitizedInnerHTML(e.currentTarget);
 
 	blockContentUpdater(blockIndex, content);
 };

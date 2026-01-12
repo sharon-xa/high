@@ -11,7 +11,7 @@ const CommandMenu = () => {
 		isCommandMenuOpen,
 		setIsCommandMenuOpen,
 	} = useCommandMenuStore();
-	const menuRef = useRef<HTMLDivElement>(null);
+	const menuRef = useRef<HTMLElement>(null);
 
 	const range = window.getSelection()?.getRangeAt(0);
 	if (!range) return null;

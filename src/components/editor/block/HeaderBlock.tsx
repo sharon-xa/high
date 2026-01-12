@@ -14,8 +14,8 @@ import useAutoFocus from "./hooks/useAutoFocus";
 type HeaderBlockProps = {
 	block: HeaderBlockType;
 	index: number;
-	setRef: (el: HTMLDivElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
+	setRef: (el: HTMLElement | null) => void;
+	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 };
 
 const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps) => {
@@ -31,13 +31,13 @@ const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps)
 	const headerProps = {
 		ref: (el: HTMLHeadingElement | null) => {
 			headerRef.current = el;
-			setRef(el as unknown as HTMLDivElement);
+			setRef(el as unknown as HTMLElement);
 		},
 		contentEditable: true,
 		"data-placeholder": `Header ${level}`,
 		suppressContentEditableWarning: true,
 		onKeyDown: (e: KeyboardEvent<HTMLHeadingElement>) =>
-			keyDownOnBlock(e as unknown as KeyboardEvent<HTMLDivElement>, index),
+			keyDownOnBlock(e as unknown as KeyboardEvent<HTMLElement>, index),
 		onInput: (e: FormEvent<HTMLHeadingElement>) =>
 			handleUserInput(e, index, updateBlockContent),
 		onSelect: handleTextSelection,

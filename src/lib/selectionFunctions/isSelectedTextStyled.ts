@@ -127,7 +127,7 @@ export const isSelectedTextStyled = (selection: Selection | null): StyledText =>
 //     if (!node)
 //         return { isStyled: false, typesOfStyle: new Set() };
 
-//     if (node instanceof HTMLDivElement && node.contentEditable === 'true')
+//     if (node instanceof HTMLElement && node.contentEditable === 'true')
 //         return { isStyled: false, typesOfStyle: new Set() };
 
 //     if (!node) return { isStyled: false, typesOfStyle: new Set() };

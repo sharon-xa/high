@@ -10,7 +10,7 @@ type Props = {
 	block: Block;
 	index: number;
 	setRef: (el: HTMLElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLDivElement>, blockIndex: number) => void;
+	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
 };
 
 const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {

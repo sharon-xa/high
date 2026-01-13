@@ -10,7 +10,7 @@
     - [x] italic.
     - [x] mark.
     - [x] code.
-    - [ ] link.
+    - [x] link.
 4. On mobile:
     - [x] Make sure to hide styles inside the mobile toolbar and show it when text is selected.
     - [x] Make sure block buttons actually add blocks.
@@ -38,6 +38,7 @@
     - [ ] Languages support.
     - [ ] Multiline support.
 - [ ] Add a global notification center, so everytime something happen we can just call the center and notify the user (not only errors, user can be notified about successes, and maybe other things).
+- [ ] Add the ability to go to links in editing mode, Ctrl and mouse click.
 
 # CodeBase Enhancments
 

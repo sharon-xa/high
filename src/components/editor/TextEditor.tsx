@@ -189,12 +189,10 @@ const TextEditor = () => {
 				updateBlockType(blockIndex, "code");
 		},
 
-		" ": (e, blockIndex, action) => {
+		" ": (_, blockIndex, action) => {
 			const block = blocks[blockIndex];
 			if (block.type === "image" && divRefs.current[blockIndex] === document.activeElement) {
 				// TODO: simulate clicking the image placeholder to open the file picker
-
-				console.log(e.currentTarget);
 				action?.();
 			}
 		},

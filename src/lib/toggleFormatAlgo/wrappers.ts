@@ -36,13 +36,16 @@ export function wrapPartial(
 }
 
 function wrap(node: Text, tag: string, href?: string): void {
-	if (hasAncestorWithTag(node, tag, href)) return;
+	if (hasAncestorWithTag(node, tag)) return;
 
 	const parent = node.parentNode;
 	if (!parent) return;
 
 	const wrapper = document.createElement(tag);
-	if (tag === "A" && href) wrapper.setAttribute("href", href);
+	if (tag === "A" && href) {
+		wrapper.setAttribute("href", href);
+		wrapper.setAttribute("target", "_blank");
+	}
 
 	parent.insertBefore(wrapper, node);
 	wrapper.appendChild(node);
@@ -52,7 +55,7 @@ export function unwrapElement(element: HTMLElement): void {
 	const parent = element.parentNode;
 	if (!parent) return;
 
-	// Move all children out, preserving order
+	// move all children out
 	while (element.firstChild) {
 		parent.insertBefore(element.firstChild, element);
 	}

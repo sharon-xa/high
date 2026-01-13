@@ -41,13 +41,12 @@ export function toggleFormat(range: Range, command: TextStylesCommand, href?: st
 	let root: Node = range.commonAncestorContainer;
 	while (root.nodeType !== Node.ELEMENT_NODE && root.parentElement) root = root.parentElement;
 
-	const shouldUnwrap = checkIfShouldUnwrap(range, textNodes, tag, href, root);
+	const shouldUnwrap = checkIfShouldUnwrap(range, textNodes, tag, root);
 
 	if (shouldUnwrap) {
 		const ancestor = findCommonFormattingAncestor(
 			textNodes.map((t) => t.node),
-			tag,
-			href
+			tag
 		);
 
 		if (ancestor) unwrapElement(ancestor);
@@ -77,7 +76,7 @@ export function toggleFormat(range: Range, command: TextStylesCommand, href?: st
 type SelectedNode = {
 	node: Text;
 	start: number;
-	end: number
+	end: number;
 };
 
 function getSelectedTextNodes(range: Range): SelectedNode[] {
@@ -103,7 +102,7 @@ function getSelectedTextNodes(range: Range): SelectedNode[] {
 	while (current) {
 		if (current.textContent === "") {
 			current = walker.nextNode() as Text | null;
-			continue
+			continue;
 		}
 
 		const isStartNode = current === range.startContainer;
@@ -129,13 +128,12 @@ function checkIfShouldUnwrap(
 	range: Range,
 	textNodes: SelectedNode[],
 	tag: string,
-	href: string | undefined,
 	root: Node
 ): boolean {
 	// 1: check if all text nodes have the ancestor
-	const ancestorResults = textNodes.map(({ node }) => hasAncestorWithTag(node, tag, href));
+	const ancestorResults = textNodes.map(({ node }) => hasAncestorWithTag(node, tag));
 
-	const allHaveAncestor = ancestorResults.every(result => result);
+	const allHaveAncestor = ancestorResults.every((result) => result);
 	if (allHaveAncestor) return true;
 
 	// 2: check if the common ancestor itself is the formatting tag
@@ -147,12 +145,7 @@ function checkIfShouldUnwrap(
 	let current = commonAncestor as HTMLElement | null;
 	let depth = 0;
 	while (current && current !== root) {
-		if (current.tagName === tag) {
-			if (tag !== "A") return true;
-
-			const elementHref = current.getAttribute("href");
-			if (elementHref === href) return true;
-		}
+		if (current.tagName === tag) return true;
 		current = current.parentElement;
 		depth++;
 	}
@@ -163,14 +156,8 @@ function checkIfShouldUnwrap(
 		let parent = node.parentElement;
 		let nodeDepth = 0;
 		while (parent && parent !== root) {
-			if (parent.tagName === tag) {
-				if (tag !== "A") {
-					formattingElements.add(parent);
-				} else {
-					const elementHref = parent.getAttribute("href");
-					if (elementHref === href) formattingElements.add(parent);
-				}
-			}
+			if (parent.tagName === tag) formattingElements.add(parent);
+
 			parent = parent.parentElement;
 			nodeDepth++;
 		}

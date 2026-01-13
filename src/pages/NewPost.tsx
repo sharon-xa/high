@@ -8,9 +8,7 @@ const NewPost = () => {
 					Write Your Post
 				</h1>
 			</header>
-			<main className="w-[90%] mx-auto lg:w-[60%] lg:text-lg">
-				<TextEditor />
-			</main>
+			<TextEditor />
 		</>
 	);
 };

@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { useEffect, useRef, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { IS_MOBILE } from "../../lib/platform";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
@@ -16,9 +16,12 @@ import CommandMenu from "./blockActions/CommandMenu";
 import MobileToolBar from "./blockActions/MobileToolbar";
 
 import type React from "react";
+import ConfirmationModal from "../ui/ConfirmationModal";
+import Button from "../ui/Button";
 
 const TextEditor = () => {
 	const divRefs = useRef<(HTMLElement | null)[]>([]);
+	const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
 
 	const {
 		// title
@@ -48,6 +51,8 @@ const TextEditor = () => {
 			divRefs.current[activeBlockIndex]?.focus();
 	}, [activeBlockIndex]);
 
+	const handleDiscard = () => {};
+
 	// Make sure that the element is caret dependent and if it shouldn't be moved yet.
 	const isCaretDependent = (blockIndex: number) => {
 		return blocks[blockIndex].type === "paragraph" || blocks[blockIndex].type === "header";
@@ -73,6 +78,10 @@ const TextEditor = () => {
 		e: React.KeyboardEvent<HTMLElement>,
 		blockIndex: number,
 		action?: () => void
+		// this parameter was added to give the "KeyDownOnBlock" consumer the ability to insert their own action,
+		// whatever that action is.
+		// it's limited because the consumer can't change the behavior for example based on the clicked button.
+		// make it more powerful when needed.
 	) => void;
 
 	const blockKeyHandlers: Record<string, BlockKeyHandler> = {
@@ -211,12 +220,12 @@ const TextEditor = () => {
 		blockIndex: number,
 		action?: () => void
 	) => {
-		if (e.ctrlKey) ctrlShortcuts[e.key]?.(e, blockIndex);
+		if (e.ctrlKey) ctrlShortcuts[e.key]?.(e, blockIndex, action);
 		else blockKeyHandlers[e.key]?.(e, blockIndex, action);
 	};
 
 	return (
-		<div className="min-h-96">
+		<main className="w-[90%] mx-auto lg:w-[60%] lg:text-lg flex flex-col min-h-[calc(100dvh-14rem)]">
 			<div className="flex flex-col gap-6">
 				<textarea
 					className="w-full border-none outline-none resize-none overflow-hidden h-auto text-4xl font-bold"
@@ -240,7 +249,6 @@ const TextEditor = () => {
 						target.style.height = target.scrollHeight + "px";
 					}}
 				/>
-
 				<div className="flex flex-col gap-4">
 					{!IS_MOBILE && isToolbarVisible && <Toolbar />}
 					{!IS_MOBILE && isCommandMenuOpen && <CommandMenu />}
@@ -255,8 +263,27 @@ const TextEditor = () => {
 					))}
 				</div>
 			</div>
+			<div className="flex justify-center items-center gap-6 pb-8 mt-auto pt-10">
+				<Button variant="primary" onClick={() => {}}>
+					Upload
+				</Button>
+
+				<Button variant="outline" onClick={() => setShowDiscardModal(true)}>
+					Discard
+				</Button>
+			</div>
+			<ConfirmationModal
+				isOpen={showDiscardModal}
+				onClose={() => setShowDiscardModal(false)}
+				onConfirm={handleDiscard}
+				title="Discard Post"
+				message="Are you sure you want to discard this post? This action cannot be undone."
+				confirmText="Discard"
+				cancelText="Cancel"
+				confirmStyle="danger"
+			/>
 			{IS_MOBILE && <MobileToolBar />}
-		</div>
+		</main>
 	);
 };
 

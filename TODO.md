@@ -39,6 +39,7 @@
     - [ ] Multiline support.
 - [ ] Add a global notification center, so everytime something happen we can just call the center and notify the user (not only errors, user can be notified about successes, and maybe other things).
 - [ ] Add the ability to go to links in editing mode, Ctrl and mouse click.
+- [ ] Add shortcuts to apply styles, like Ctrl+b for bold.
 
 # CodeBase Enhancments
 

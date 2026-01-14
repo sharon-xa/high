@@ -25,11 +25,9 @@ export function getObjectPosition(
 	objectWidth: number,
 	objectHeight: number
 ): { top: number; centerX: number } {
-	const top = rect.top + window.scrollY - objectHeight;
-
+	const top = rect.top - objectHeight;
 	const halfObjectWidth = objectWidth / 2;
-
-	let centerX = rect.left + window.scrollX + rect.width / 2;
+	let centerX = rect.left + rect.width / 2;
 
 	if (centerX - halfObjectWidth < 0) centerX = halfObjectWidth + 10;
 	if (centerX + halfObjectWidth > window.innerWidth)

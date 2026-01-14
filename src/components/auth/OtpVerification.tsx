@@ -57,14 +57,14 @@ const OtpVerification = () => {
 
 				{/* Error Message */}
 				{verifyOtpMutation.isError && (
-					<div className="bg-red-500/20 border border-red-500 p-3 rounded-lg mb-5 text-center text-red-500">
+					<div className="bg-red-500/20 border border-red-500 p-3 rounded mb-5 text-center text-red-500">
 						{getErrorMessage(verifyOtpMutation.error)}
 					</div>
 				)}
 
 				{/* Success Message for Resend */}
 				{resendOtpMutation.isSuccess && (
-					<div className="bg-green-500/20 border border-green-500 p-3 rounded-lg mb-5 text-center text-green-500">
+					<div className="bg-green-500/20 border border-green-500 p-3 rounded mb-5 text-center text-green-500">
 						OTP has been resent to your email
 					</div>
 				)}
@@ -96,7 +96,7 @@ const OtpVerification = () => {
 					<button
 						type="submit"
 						disabled={verifyOtpMutation.isPending}
-						className={`w-full p-3 border-none rounded-4xl bg-primary text-lg ${
+						className={`w-full p-3 border-none rounded-lg bg-primary text-lg ${
 							verifyOtpMutation.isPending
 								? "cursor-not-allowed opacity-70"
 								: "cursor-pointer opacity-100"

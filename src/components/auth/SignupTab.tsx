@@ -170,7 +170,7 @@ const SignupTab = () => {
 			<button
 				type="submit"
 				disabled={registerMutation.isPending}
-				className={`w-full p-3 border-none rounded-4xl bg-primary text-lg ${
+				className={`w-full p-3 border-none rounded-lg bg-primary text-lg ${
 					registerMutation.isPending
 						? "cursor-not-allowed opacity-70"
 						: "cursor-pointer opacity-100"

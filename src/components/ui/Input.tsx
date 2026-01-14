@@ -31,7 +31,7 @@ const Input = ({ value, onChangeFunc, Icon, type, inputName, placeholder }: Prop
 	if (type === "date") {
 		return (
 			<div
-				className={`flex items-center py-3 px-4 border-2 bg-background rounded-lg ${activeInput ? "active:border-light-border" : "border-border"}`}
+				className={`flex items-center py-3 px-4 border-2 bg-background rounded ${activeInput ? "active:border-light-border" : "border-border"}`}
 				onClick={openCalendar}
 			>
 				<Icon
@@ -57,7 +57,7 @@ const Input = ({ value, onChangeFunc, Icon, type, inputName, placeholder }: Prop
 
 	return (
 		<div
-			className={`flex items-center py-3 px-4 border-2 bg-background rounded-lg ${activeInput ? "active:border-light-border" : "border-border"}`}
+			className={`flex items-center py-3 px-4 border-2 bg-background rounded ${activeInput ? "active:border-light-border" : "border-border"}`}
 		>
 			<Icon
 				size={20}

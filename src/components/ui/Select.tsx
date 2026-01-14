@@ -33,7 +33,7 @@ const Select = ({ value, onChangeFunc, Icon, inputName, options }: Props) => {
 			className={`
                 flex items-center py-3 px-4 border-2
                 ${activeInput ? "active:border-light-border" : "border-border"}
-                bg-background rounded-lg
+                bg-background rounded
             `}
 			onClick={openSelect}
 			onFocus={() => setActiveInput(true)}

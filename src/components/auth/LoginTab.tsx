@@ -98,7 +98,7 @@ const LoginTab = () => {
 			<button
 				type="submit"
 				disabled={loginMutation.isPending}
-				className={`w-full h-14 p-3 border-none rounded-4xl bg-primary text-lg ${
+				className={`w-full h-14 p-3 border-none rounded-lg bg-primary text-lg ${
 					loginMutation.isPending
 						? "cursor-not-allowed opacity-70"
 						: "cursor-pointer opacity-100"

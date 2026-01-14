@@ -2,8 +2,7 @@ import { create } from "zustand";
 
 import type { ToolbarStore } from "../../types/editor/toolbar.types";
 import { toggleFormat } from "../../lib/toggleFormatAlgo/toggleFormat";
-import { isSelectedTextStyled } from "../../lib/selectionFunctions/isSelectedTextStyled";
-import { getSelectionDetails } from "../../lib/selectionFunctions/getSelectionDetails";
+import { getSelectionDetails, isSelectedTextStyled } from "../../lib/selectionFunctions";
 
 export const useToolbarStore = create<ToolbarStore>((set, get) => ({
 	isToolbarVisible: false,

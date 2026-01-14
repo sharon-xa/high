@@ -2,10 +2,7 @@ import { useEffect, useRef, type KeyboardEvent } from "react";
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
 import type { CodeBlock as CodeBlockType } from "../../../types/editor/block.types";
 import useAutoFocus from "./hooks/useAutoFocus";
-import {
-	getCaretPosition,
-	setCaretPosition,
-} from "../../../lib/selectionFunctions/getAndSetSelection";
+import { getCaretPosition, setCaretPosition } from "../../../lib/selectionFunctions";
 
 type CodeBlockProps = {
 	block: CodeBlockType;

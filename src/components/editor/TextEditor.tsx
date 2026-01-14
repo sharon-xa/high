@@ -8,7 +8,7 @@ import {
 	getCaretPosition,
 	setCaretAtEndOfText,
 	setCaretPosition,
-} from "../../lib/selectionFunctions/getAndSetSelection";
+} from "../../lib/selectionFunctions";
 
 import BlockElement from "./block/BlockElement";
 import Toolbar from "./blockActions/Toolbar";
@@ -135,6 +135,8 @@ const TextEditor = () => {
 			if (blocks[blockIndex].type === "code" && !isCaretAtTheStart(e)) return;
 
 			if (isCaretDependent(blockIndex) && isCaretAfterStart(e)) return;
+
+			if (blockIndex === 0) return;
 
 			e.preventDefault();
 			const prev = blockIndex - 1;

@@ -1,8 +1,5 @@
 import { useLayoutEffect, type RefObject } from "react";
-import {
-	getCaretPosition,
-	setCaretPosition,
-} from "../../../../lib/selectionFunctions/getAndSetSelection";
+import { getCaretPosition, setCaretPosition } from "../../../../lib/selectionFunctions";
 import type { ParagraphBlock, HeaderBlock, CodeBlock } from "../../../../types/editor/block.types";
 
 type TextBlock = ParagraphBlock | HeaderBlock | CodeBlock;

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import { useCommandMenuStore } from "../../../stores/editorStores/commandMenuStore";
-import { getObjectPositionXY } from "../../../lib/selectionFunctions/getSelectionDetails";
+import { getObjectPositionXY } from "../../../lib/selectionFunctions";
 
 const CommandMenu = () => {
 	const {
@@ -11,7 +11,7 @@ const CommandMenu = () => {
 		isCommandMenuOpen,
 		setIsCommandMenuOpen,
 	} = useCommandMenuStore();
-	const menuRef = useRef<HTMLElement>(null);
+	const menuRef = useRef<HTMLDivElement>(null);
 
 	const range = window.getSelection()?.getRangeAt(0);
 	if (!range) return null;
@@ -75,7 +75,7 @@ const CommandMenu = () => {
 	return (
 		<div
 			ref={menuRef}
-			className="min-w-56 fixed outline-2 outline-light-border bg-border text-white rounded-lg shadow-lg p-2 flex flex-col gap-1 z-50"
+			className="min-w-56 fixed outline-2 outline-light-border bg-border text-white rounded shadow-lg p-2 flex flex-col gap-1 z-50"
 			style={{
 				top: `${centerY}px`,
 				left: `${centerX}px`,

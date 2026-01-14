@@ -17,7 +17,7 @@ const NavItem = ({ Icon, to, className, iconClassName }: Props) => {
 			}
 			to={to}
 		>
-			<Icon size={28} className={iconClassName} />
+			<Icon size={26} className={iconClassName} />
 		</NavLink>
 	);
 };

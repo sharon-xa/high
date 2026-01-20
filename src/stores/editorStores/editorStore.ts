@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { v4 as uuid } from "uuid";
 import type { EditorStore } from "../../types/editor/editor.types";
-import type { Block, BlockType } from "../../types/editor/block.types";
+import type { Block, BlockType, ParagraphBlock } from "../../types/editor/block.types";
 
 // TODO: what is debouncing? and do I need it?
 
@@ -11,6 +11,7 @@ export const useEditorStore = create<EditorStore>()(
 		title: "",
 		blocks: [{ uuid: uuid(), content: "", type: "paragraph" }],
 		activeBlockIndex: 0,
+		isDragging: false,
 
 		updateTitle: (title: string) =>
 			set((state) => {
@@ -71,12 +72,19 @@ export const useEditorStore = create<EditorStore>()(
 
 		reorderBlocks(sourceIndex: number, destinationIndex: number) {
 			set((state) => {
-				const [movedBlock] = state.blocks.splice(sourceIndex, 1);
-				state.blocks.splice(destinationIndex, 0, movedBlock);
+				if (sourceIndex === destinationIndex) return;
 
-				if (state.activeBlockIndex === sourceIndex) {
-					state.activeBlockIndex = destinationIndex;
-				}
+				const blocks = [...state.blocks];
+				const [moved] = blocks.splice(sourceIndex, 1);
+
+				let adjustedIndex = destinationIndex;
+				if (sourceIndex < destinationIndex) adjustedIndex -= 1;
+
+				blocks.splice(adjustedIndex, 0, moved);
+				state.blocks = blocks;
+
+				if (state.activeBlockIndex === sourceIndex)
+					state.activeBlockIndex = adjustedIndex;
 			});
 		},
 
@@ -131,6 +139,19 @@ export const useEditorStore = create<EditorStore>()(
 						content: "",
 					};
 			}
+		},
+
+		flushBlocks() {
+			set((state) => {
+				state.blocks = [{ uuid: uuid(), type: "paragraph", content: "" } as ParagraphBlock];
+			});
+		},
+
+		setIsDragging(dragging) {
+			set((state) => {
+				if (state.isDragging === dragging) return;
+				state.isDragging = dragging;
+			})
 		},
 	}))
 );

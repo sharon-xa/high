@@ -3,11 +3,11 @@ import { GripVertical, Trash } from "lucide-react";
 import { useEditorStore } from "../../../stores/editorStores/editorStore";
 import type { Block } from "../../../types/editor/block.types";
 
-import ParagraphBlock from "./ParagraphBlock";
-import HeaderBlock from "./HeaderBlock";
-import CodeBlock from "./CodeBlock";
-import ImageBlockComponent from "./ImageBlock";
-import SeparatorBlock from "./SeparatorBlock";
+import ParagraphBlock from "./blockElements/ParagraphBlock";
+import HeaderBlock from "./blockElements/HeaderBlock";
+import CodeBlock from "./blockElements/CodeBlock";
+import ImageBlockComponent from "./blockElements/ImageBlock";
+import SeparatorBlock from "./blockElements/SeparatorBlock";
 
 type Props = {
 	block: Block;
@@ -17,8 +17,8 @@ type Props = {
 };
 
 const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
-	const { blocks, activeBlockIndex, reorderBlocks, deleteBlock } = useEditorStore();
-	const [isDragging, setIsDragging] = useState<boolean>(false);
+	const { blocks, activeBlockIndex, isDragging, setIsDragging, reorderBlocks, deleteBlock } = useEditorStore();
+	const [upperOrDowner, setUpperOrDowner] = useState<"upper" | "downer" | null>(null);
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const dragImageRef = useRef<HTMLDivElement>(null);
 	let blockElement: JSX.Element;
@@ -84,9 +84,8 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
 		e.dataTransfer.effectAllowed = "move";
 		e.dataTransfer.setData("text/plain", index.toString());
 
-		if (dragImageRef.current) {
+		if (dragImageRef.current)
 			e.dataTransfer.setDragImage(dragImageRef.current, 0, 0);
-		}
 
 		setIsDragging(true);
 	};
@@ -100,14 +99,26 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
 	const handleDragOver = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
+
 		e.dataTransfer.dropEffect = "move";
-		setIsHovered(true);
+
+		const rect = e.currentTarget.getBoundingClientRect();
+		const cursorY = e.clientY;
+		const elementMiddle = rect.top + rect.height / 2;
+
+		setUpperOrDowner(prev => {
+			const next = cursorY < elementMiddle ? "upper" : "downer";
+			return prev === next ? prev : next;
+		});
+
+		setIsHovered(prev => (prev ? prev : true));
 	};
 
 	const handleDragLeave = (e: DragEvent<HTMLElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
 		setIsHovered(false);
+		setUpperOrDowner(null);
 	};
 
 	const handleDrop = (e: DragEvent<HTMLElement>) => {
@@ -115,10 +126,18 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
 		e.stopPropagation();
 
 		const draggedIndex = parseInt(e.dataTransfer.getData("text/plain"));
-		reorderBlocks(draggedIndex, index);
+		if (draggedIndex === index) return;
+
+		const destinationIndex =
+			upperOrDowner === "upper"
+				? index
+				: index + 1;
+
+		reorderBlocks(draggedIndex, destinationIndex);
 
 		setIsDragging(false);
 		setIsHovered(false);
+		setUpperOrDowner(null);
 	};
 
 	const handleBlockDeletion = () => {
@@ -127,7 +146,7 @@ const BlockElement = ({ block, index, setRef, keyDownOnBlock }: Props) => {
 
 	blockElement = (
 		<div
-			className={`relative py-1 ${isDragging ? "opacity-50" : ""} border-b-2 ${isHovered ? "border-primary" : "border-transparent"}`}
+			className={`relative min-h-8 flex items-center ${isDragging ? "opacity-50" : ""} ${upperOrDowner === "upper" ? "border-t-2" : upperOrDowner === "downer" ? "border-b-2" : "border-none"}  ${isHovered ? "border-primary z-1000" : "border-transparent"}`}
 			onDragOver={handleDragOver}
 			onDragLeave={handleDragLeave}
 			onDrop={handleDrop}

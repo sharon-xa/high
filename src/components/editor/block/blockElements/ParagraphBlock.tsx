@@ -1,22 +1,20 @@
 import { useRef, type FormEvent, type KeyboardEvent } from "react";
-import { useEditorStore } from "../../../stores/editorStores/editorStore";
-import { useToolbarStore } from "../../../stores/editorStores/toolbarStore";
-import { IS_MOBILE } from "../../../lib/platform";
-import useTextSelection from "./hooks/useTextSelection";
-import useContentSync from "./hooks/useContentSync";
-import type { ParagraphBlock as ParagraphBlockType } from "../../../types/editor/block.types";
-import { handleUserInput } from "./handleUserInput";
-import useAutoFocus from "./hooks/useAutoFocus";
+import { useEditorStore } from "../../../../stores/editorStores/editorStore";
+import { useToolbarStore } from "../../../../stores/editorStores/toolbarStore";
+import { IS_MOBILE } from "../../../../lib/platform";
+import { handleUserInput } from "../handleUserInput";
 
-type ParagraphBlockProps = {
-	block: ParagraphBlockType;
-	index: number;
-	setRef: (el: HTMLElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
-};
+import useTextSelection from "../hooks/useTextSelection";
+import useContentSync from "../hooks/useContentSync";
+import useAutoFocus from "../hooks/useAutoFocus";
+
+import type { BlockElementProps } from "../blockElementProps";
+import type { ParagraphBlock as ParagraphBlockType } from "../../../../types/editor/block.types";
+
+interface ParagraphBlockProps extends BlockElementProps<ParagraphBlockType> { }
 
 const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlockProps) => {
-	const { activeBlockIndex, updateBlockContent, setActiveBlock } = useEditorStore();
+	const { activeBlockIndex, isDragging, updateBlockContent, setActiveBlock } = useEditorStore();
 	const { hideToolbar } = useToolbarStore();
 	const { handleTextSelection } = useTextSelection();
 	const divRef = useRef<HTMLElement>(null);
@@ -30,7 +28,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 				divRef.current = el;
 				setRef(el);
 			}}
-			contentEditable
+			contentEditable={isDragging === true ? "false" : "true"}
 			suppressContentEditableWarning
 			data-placeholder={IS_MOBILE === true ? "Text here..." : "Press / for the command menu"}
 			onKeyDown={(e: KeyboardEvent<HTMLElement>) => keyDownOnBlock(e, index)}
@@ -44,7 +42,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 			}}
 			onFocus={() => setActiveBlock(index)}
 			autoFocus={index === activeBlockIndex}
-			className="w-full border-none outline-none text-paragraph"
+			className="min-h-8 w-full border-none outline-none text-paragraph"
 		/>
 	);
 };

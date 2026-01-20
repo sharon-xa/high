@@ -1,5 +1,5 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { AuthFormsProvider } from "./contexts/AuthFormsContext";
 
 import PublicOnlyRoute from "./pages/otherPages/PublicOnlyRoute";
 import ProtectedRoute from "./pages/otherPages/ProtectedRoute";
@@ -11,7 +11,7 @@ import HomePage from "./pages/Home";
 import NewPost from "./pages/NewPost";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
-import { AuthFormsProvider } from "./contexts/AuthFormsContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const SECOND = 1000;
 const MINUTE = SECOND * 60;

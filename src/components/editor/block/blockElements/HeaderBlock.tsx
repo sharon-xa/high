@@ -1,25 +1,21 @@
-import { useRef, type FormEvent, type KeyboardEvent, type CSSProperties } from "react";
+import { useRef, type FormEvent, type KeyboardEvent } from "react";
 
-import useTextSelection from "./hooks/useTextSelection";
-import useContentSync from "./hooks/useContentSync";
+import useTextSelection from "../hooks/useTextSelection";
+import useContentSync from "../hooks/useContentSync";
+import useAutoFocus from "../hooks/useAutoFocus";
 
-import { useEditorStore } from "../../../stores/editorStores/editorStore";
-import { useToolbarStore } from "../../../stores/editorStores/toolbarStore";
-import { IS_MOBILE } from "../../../lib/platform";
-import { handleUserInput } from "./handleUserInput";
+import { useEditorStore } from "../../../../stores/editorStores/editorStore";
+import { useToolbarStore } from "../../../../stores/editorStores/toolbarStore";
+import { IS_MOBILE } from "../../../../lib/platform";
+import { handleUserInput } from "../handleUserInput";
 
-import type { HeaderBlock as HeaderBlockType } from "../../../types/editor/block.types";
-import useAutoFocus from "./hooks/useAutoFocus";
+import type { HeaderBlock as HeaderBlockType } from "../../../../types/editor/block.types";
+import type { BlockElementProps } from "../blockElementProps";
 
-type HeaderBlockProps = {
-	block: HeaderBlockType;
-	index: number;
-	setRef: (el: HTMLElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
-};
+interface HeaderBlockProps extends BlockElementProps<HeaderBlockType> { };
 
 const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps) => {
-	const { activeBlockIndex, updateBlockContent, setActiveBlock } = useEditorStore();
+	const { activeBlockIndex, isDragging, updateBlockContent, setActiveBlock } = useEditorStore();
 	const { hideToolbar } = useToolbarStore();
 	const { handleTextSelection } = useTextSelection();
 	const headerRef = useRef<HTMLHeadingElement>(null);
@@ -33,9 +29,9 @@ const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps)
 			headerRef.current = el;
 			setRef(el as unknown as HTMLElement);
 		},
-		contentEditable: true,
-		"data-placeholder": `Header ${level}`,
+		contentEditable: isDragging ? false : true,
 		suppressContentEditableWarning: true,
+		"data-placeholder": `Header ${level}`,
 		onKeyDown: (e: KeyboardEvent<HTMLHeadingElement>) =>
 			keyDownOnBlock(e as unknown as KeyboardEvent<HTMLElement>, index),
 		onInput: (e: FormEvent<HTMLHeadingElement>) =>
@@ -49,12 +45,7 @@ const HeaderBlock = ({ block, index, setRef, keyDownOnBlock }: HeaderBlockProps)
 		},
 		onFocus: () => setActiveBlock(index),
 		autoFocus: index === activeBlockIndex,
-		className: "w-full border-none outline-none text-header",
-		style: {
-			fontSize: level === 1 ? "2em" : level === 2 ? "1.5em" : "1.25em",
-			fontWeight: "bold",
-			margin: "0.5em 0",
-		} as CSSProperties,
+		className: `w-full border-none outline-none text-header font-bold ${level === 1 ? "text-4xl py-3" : level === 2 ? "text-3xl py-2" : "text-2xl py-1.5"}`,
 	};
 
 	if (level === 1) return <h1 {...headerProps} />;

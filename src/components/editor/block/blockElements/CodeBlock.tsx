@@ -1,15 +1,11 @@
 import { useEffect, useRef, type KeyboardEvent } from "react";
-import { useEditorStore } from "../../../stores/editorStores/editorStore";
-import type { CodeBlock as CodeBlockType } from "../../../types/editor/block.types";
-import useAutoFocus from "./hooks/useAutoFocus";
-import { getCaretPosition, setCaretPosition } from "../../../lib/selectionFunctions";
+import { useEditorStore } from "../../../../stores/editorStores/editorStore";
+import type { CodeBlock as CodeBlockType } from "../../../../types/editor/block.types";
+import useAutoFocus from "../hooks/useAutoFocus";
+import { getCaretPosition, setCaretPosition } from "../../../../lib/selectionFunctions";
+import type { BlockElementProps } from "../blockElementProps";
 
-type CodeBlockProps = {
-	block: CodeBlockType;
-	index: number;
-	setRef: (el: HTMLElement | null) => void;
-	keyDownOnBlock: (e: KeyboardEvent<HTMLElement>, blockIndex: number) => void;
-};
+interface CodeBlockProps extends BlockElementProps<CodeBlockType> { };
 
 const CodeBlock = ({ block, index, setRef, keyDownOnBlock }: CodeBlockProps) => {
 	const { activeBlockIndex, updateBlockContent, setActiveBlock } = useEditorStore();

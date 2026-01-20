@@ -1,19 +1,15 @@
 import { useRef, useState } from "react";
-import { useEditorStore } from "../../../stores/editorStores/editorStore";
-import type { SeparatorBlock as SeparatorBlockType } from "../../../types/editor/block.types";
-import useAutoFocus from "./hooks/useAutoFocus";
+import { useEditorStore } from "../../../../stores/editorStores/editorStore";
+import useAutoFocus from "../hooks/useAutoFocus";
+import type { SeparatorBlock as SeparatorBlockType } from "../../../../types/editor/block.types";
+import type { BlockElementProps } from "../blockElementProps";
 
-type SeparatorBlockProps = {
-	block: SeparatorBlockType;
-	index: number;
-	setRef: (el: HTMLElement | null) => void;
-	keyDownOnBlock: (e: React.KeyboardEvent<HTMLElement>, blockIndex: number) => void;
-};
+interface SeparatorBlockProps extends BlockElementProps<SeparatorBlockType> { }
 
 const SeparatorBlock = ({ index, setRef, keyDownOnBlock }: SeparatorBlockProps) => {
 	const { activeBlockIndex, setActiveBlock } = useEditorStore();
-	const divRef = useRef<HTMLElement>(null);
 	const [isActive, setIsActive] = useState<boolean>(activeBlockIndex === index);
+	const divRef = useRef<HTMLElement>(null);
 
 	useAutoFocus(divRef, activeBlockIndex === index, setIsActive);
 
@@ -28,13 +24,7 @@ const SeparatorBlock = ({ index, setRef, keyDownOnBlock }: SeparatorBlockProps) 
 			tabIndex={0}
 			className={`w-full border-none p-2 ${isActive ? "outline-2 outline-primary" : ""} rounded`}
 		>
-			<hr
-				style={{
-					border: "none",
-					borderTop: "2px solid var(--color-border)",
-					margin: 0,
-				}}
-			/>
+			<hr className="w-full h-0.5 bg-border border-none rounded-2xl" />
 		</div>
 	);
 };

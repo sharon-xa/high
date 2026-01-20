@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import { IS_MOBILE } from "../../lib/platform";
 import { useEditorStore } from "../../stores/editorStores/editorStore";
 import { useToolbarStore } from "../../stores/editorStores/toolbarStore";
@@ -9,19 +9,18 @@ import {
 	setCaretAtEndOfText,
 	setCaretPosition,
 } from "../../lib/selectionFunctions";
+import { useModalStore } from "../../stores/general/modal";
 
 import BlockElement from "./block/BlockElement";
 import Toolbar from "./blockActions/Toolbar";
 import CommandMenu from "./blockActions/CommandMenu";
 import MobileToolBar from "./blockActions/MobileToolbar";
-
-import type React from "react";
-import ConfirmationModal from "../ui/ConfirmationModal";
+import ConfirmationModal from "../ui/modals/ConfirmationModal";
 import Button from "../ui/Button";
 
 const TextEditor = () => {
 	const divRefs = useRef<(HTMLElement | null)[]>([]);
-	const [showDiscardModal, setShowDiscardModal] = useState<boolean>(false);
+	const openModal = useModalStore((s) => s.open);
 
 	const {
 		// title
@@ -32,6 +31,7 @@ const TextEditor = () => {
 		blocks,
 		addBlock,
 		deleteBlock,
+		flushBlocks,
 		updateBlockType,
 
 		// activity
@@ -51,11 +51,20 @@ const TextEditor = () => {
 			divRefs.current[activeBlockIndex]?.focus();
 	}, [activeBlockIndex]);
 
-	const handleDiscard = () => {};
+	const handleDiscard = () => {
+		flushBlocks();
+		setActiveBlock(0);
+	};
 
-	// Make sure that the element is caret dependent and if it shouldn't be moved yet.
+	const cancelDiscard = () => divRefs.current[activeBlockIndex]?.focus();
+
+	// Make sure that the element is caret dependent.
 	const isCaretDependent = (blockIndex: number) => {
-		return blocks[blockIndex].type === "paragraph" || blocks[blockIndex].type === "header";
+		return (
+			blocks[blockIndex].type === "paragraph" ||
+			blocks[blockIndex].type === "header" ||
+			blocks[blockIndex].type === "code"
+		);
 	};
 
 	const isCaretAfterStart = (e: KeyboardEvent<HTMLElement>) => {
@@ -266,24 +275,30 @@ const TextEditor = () => {
 				</div>
 			</div>
 			<div className="flex justify-center items-center gap-6 pb-8 mt-auto pt-10">
-				<Button variant="primary" onClick={() => {}}>
+				<Button variant="primary" onClick={() => { }}>
 					Upload
 				</Button>
 
-				<Button variant="outline" onClick={() => setShowDiscardModal(true)}>
+				<Button
+					variant="outline"
+					onClick={() =>
+						openModal(ConfirmationModal, {
+							props: {
+								title: "Discard Post",
+								message:
+									"Are you sure you want to discard this post? This action cannot be undone.",
+								confirmText: "Discard",
+								cancelText: "Cancel",
+								confirmStyle: "danger",
+							},
+							onClose: cancelDiscard,
+							onConfirm: handleDiscard,
+						})
+					}
+				>
 					Discard
 				</Button>
 			</div>
-			<ConfirmationModal
-				isOpen={showDiscardModal}
-				onClose={() => setShowDiscardModal(false)}
-				onConfirm={handleDiscard}
-				title="Discard Post"
-				message="Are you sure you want to discard this post? This action cannot be undone."
-				confirmText="Discard"
-				cancelText="Cancel"
-				confirmStyle="danger"
-			/>
 			{IS_MOBILE && <MobileToolBar />}
 		</main>
 	);

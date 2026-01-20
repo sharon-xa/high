@@ -31,9 +31,12 @@
 - [x] Review the styles in "index.css" specifically "text-editor-input" styles.
 - [x] Writing anything and then removing it will cause the placeholder to be gone from the paragrapgh block and header block.
 - [x] When selecting text to style the toolbar appears in weird places, only when the user already scrolled.
+- [x] The discard button in new-post is non functional.
+- [x] Moving the block over an image is an unexpected behevior.
+- [x] Check where the focus is when image is added to the image block using the space button.
 - [ ] Test the toggleFormat function.
 - [ ] Fix the authenticaiton, saving the state of authentication will result in static state, so we're just gonna keep being authenticated even if the user actually isn't authenticated (session expired).
-- [ ] The discard and upload buttons in new-post is non functional.
+- [ ] Deleting from the middle of the text make the cursor go to the end of text.
 
 # Features
 
@@ -46,6 +49,7 @@
 - [ ] Add the ability to go to links in editing mode, Ctrl and mouse click.
 - [ ] Add shortcuts to apply styles, like Ctrl+b for bold.
 - [ ] Add shortcuts to reorder blocks.
+- [ ] Upload posts to backend.
 
 # CodeBase Enhancments
 

@@ -30,7 +30,7 @@ const ParagraphBlock = ({ block, index, setRef, keyDownOnBlock }: ParagraphBlock
 			}}
 			contentEditable={isDragging === true ? "false" : "true"}
 			suppressContentEditableWarning
-			data-placeholder={IS_MOBILE === true ? "Text here..." : "Press / for the command menu"}
+			data-placeholder={IS_MOBILE === true ? "Text here..." : "Write, press '/' for commands..."}
 			onKeyDown={(e: KeyboardEvent<HTMLElement>) => keyDownOnBlock(e, index)}
 			onInput={(e: FormEvent<HTMLElement>) => handleUserInput(e, index, updateBlockContent)}
 			onSelect={handleTextSelection}

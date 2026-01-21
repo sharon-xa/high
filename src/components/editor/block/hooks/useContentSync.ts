@@ -9,25 +9,24 @@ const useContentSync = (block: TextBlock, elementRef: RefObject<HTMLElement | nu
 		if (!elementRef.current) return;
 		const currentContent = elementRef.current.innerHTML;
 
-		if (currentContent !== block.content) {
-			const selection = window.getSelection();
-			const element = elementRef.current as HTMLElement;
-			const caretPos =
-				selection && element.contains(selection.focusNode)
-					? getCaretPosition(element)
-					: null;
+		if (currentContent === block.content) return;
 
-			elementRef.current.innerHTML = block.content;
+		const selection = window.getSelection();
+		const element = elementRef.current;
+		const caretPos =
+			selection && element.contains(selection.focusNode)
+				? getCaretPosition(element)
+				: null;
 
-			if (caretPos !== null && elementRef.current) {
-				const maxPos = elementRef.current.textContent?.length || 0;
-				const safePos = Math.min(caretPos, maxPos);
+		elementRef.current.innerHTML = block.content;
 
-				setCaretPosition(element, safePos);
-			}
-		} else {
-			setCaretPosition(elementRef.current, currentContent.length);
+		if (caretPos !== null && elementRef.current) {
+			const maxPos = elementRef.current.textContent?.length || 0;
+			const safePos = Math.min(caretPos, maxPos);
+
+			setCaretPosition(element, safePos);
 		}
+
 	}, [elementRef.current, block.content]);
 };
 

@@ -34,20 +34,21 @@
 - [x] The discard button in new-post is non functional.
 - [x] Moving the block over an image is an unexpected behevior.
 - [x] Check where the focus is when image is added to the image block using the space button.
+- [x] Deleting from the middle of the text make the cursor go to the end of text.
 - [ ] Test the toggleFormat function.
 - [ ] Fix the authenticaiton, saving the state of authentication will result in static state, so we're just gonna keep being authenticated even if the user actually isn't authenticated (session expired).
-- [ ] Deleting from the middle of the text make the cursor go to the end of text.
+- [ ] There are some weird behaviors in the code block.
 
 # Features
 
 - [x] Add placeholder text for every block, let the user know that they can press "/" for a command menu.
-- [ ] Code Block is very generic and we CANNOT write newlines in it.
+- [ ] Code Block is very generic.
     - [ ] Syntax highlighting.
-    - [ ] Languages support.
+    - [ ] Multi Language support.
     - [x] Multiline support.
 - [ ] Add a global notification center, so everytime something happen we can just call the center and notify the user (not only errors, user can be notified about successes, and maybe other things).
 - [ ] Add the ability to go to links in editing mode, Ctrl and mouse click.
-- [ ] Add shortcuts to apply styles, like Ctrl+b for bold.
+- [ ] Add shortcuts to apply and remove styles, like Ctrl+b for bold.
 - [ ] Add shortcuts to reorder blocks.
 - [ ] Upload posts to backend.
 

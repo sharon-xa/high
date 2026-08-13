@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import type { EditorStore } from "../../types/editor/editor.types";
 import type { Block, BlockType, ParagraphBlock } from "../../types/editor/block.types";
 
-// TODO: what is debouncing? and do I need it?
+// TODO: what is debouncing? and do I need it here?
 
 export const useEditorStore = create<EditorStore>()(
 	immer((set) => ({

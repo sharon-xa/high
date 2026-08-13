@@ -212,7 +212,6 @@ const TextEditor = () => {
 		" ": (_, blockIndex, action) => {
 			const block = blocks[blockIndex];
 			if (block.type === "image" && divRefs.current[blockIndex] === document.activeElement) {
-				// TODO: simulate clicking the image placeholder to open the file picker
 				action?.();
 			}
 		},
@@ -275,7 +274,7 @@ const TextEditor = () => {
 				</div>
 			</div>
 			<div className="flex justify-center items-center gap-6 pb-8 mt-auto pt-10">
-				<Button variant="primary" onClick={() => { }}>
+				<Button variant="primary" onClick={() => {}}>
 					Upload
 				</Button>
 
